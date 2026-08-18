@@ -1,0 +1,15 @@
+
+1- git init: Initialize a new Git repository in the current directory.
+
+2- git status: Show current branch, and new and modified files.
+
+3- 
+    a. git remote -v: Show remote repositories.
+    b. git remote add origin <repository-url>: Add a remote repository.
+    c. git remote rename origin upstream
+    d. git remote remove origin
+
+4- 
+    a. git checkout .: Discard changes in working directory.
+    b. git checkout <branch-name>: Switch to a branch.
+    c. git checkout -b <branch-name>: Create a new branch and switch to it.
