@@ -1,0 +1,912 @@
+{
+  "tables": [
+    {
+      "id": "tbl_user",
+      "name": "table_User",
+      "x": -500,
+      "y": -1800,
+      "locked": false,
+      "comment": "",
+      "color": "#175e7a",
+      "collapsed": false,
+      "fields": [
+        {
+          "name": "SID",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": true,
+          "comment": "",
+          "id": "f_00000001136ro6",
+          "size": ""
+        },
+        {
+          "name": "name",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": true,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": "f_00000002rkphgr",
+          "size": ""
+        },
+        {
+          "name": "email",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": true,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": "f_00000003y3sr5a",
+          "size": ""
+        },
+        {
+          "name": "nickName",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": true,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": "f_00000004vzbhol",
+          "size": ""
+        },
+        {
+          "name": "mobileNo",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": "f_00000005ngdjzp",
+          "size": ""
+        },
+        {
+          "name": "password",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "bcrypt hash",
+          "id": "f_00000006s40t04",
+          "size": ""
+        },
+        {
+          "name": "isActive",
+          "type": "INTEGER",
+          "default": "1",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "0=disabled,1=active",
+          "id": "f_00000007ifojp6",
+          "size": ""
+        },
+        {
+          "name": "createdAt",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": "f_000000083wkcxy",
+          "size": ""
+        },
+        {
+          "name": "createdBy_SID",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "unsigned": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "admin who created this user",
+          "id": "f_00000009h2qdqy",
+          "size": ""
+        }
+      ],
+      "indices": []
+    },
+    {
+      "id": "tbl_conv",
+      "name": "table_Conversation",
+      "x": 100,
+      "y": -1800,
+      "locked": false,
+      "comment": "",
+      "color": "#175e7a",
+      "collapsed": false,
+      "fields": [
+        {
+          "name": "SID",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": true,
+          "comment": "",
+          "id": "f_0000000a1yohlo",
+          "size": ""
+        },
+        {
+          "name": "name",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "unsigned": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "group name; NULL for 1:1",
+          "id": "f_0000000brd2tgj",
+          "size": ""
+        },
+        {
+          "name": "isGroup",
+          "type": "INTEGER",
+          "default": "0",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "0=DM,1=group",
+          "id": "f_0000000cq9w8xn",
+          "size": ""
+        },
+        {
+          "name": "createdBy_SID",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": "f_0000000dotyb9u",
+          "size": ""
+        },
+        {
+          "name": "createdAt",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": "f_0000000ezrvqq2",
+          "size": ""
+        }
+      ],
+      "indices": []
+    },
+    {
+      "id": "tbl_cm",
+      "name": "table_ConversationMember",
+      "x": 100,
+      "y": -1450,
+      "locked": false,
+      "comment": "",
+      "color": "#175e7a",
+      "collapsed": false,
+      "fields": [
+        {
+          "name": "SID",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": true,
+          "comment": "",
+          "id": "f_0000000f9iufyh",
+          "size": ""
+        },
+        {
+          "name": "conversation_SID",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": "f_0000000g8go21k",
+          "size": ""
+        },
+        {
+          "name": "user_SID",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": "f_0000000hthpu2u",
+          "size": ""
+        },
+        {
+          "name": "isGroupAdmin",
+          "type": "INTEGER",
+          "default": "0",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "group admin flag",
+          "id": "f_0000000i827u6o",
+          "size": ""
+        },
+        {
+          "name": "joinedAt",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": "f_0000000j29qvoo",
+          "size": ""
+        }
+      ],
+      "indices": [
+        {
+          "id": 0,
+          "name": "uq_cm_conv_user",
+          "unique": true,
+          "fields": [
+            "conversation_SID",
+            "user_SID"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tbl_msg",
+      "name": "table_Message",
+      "x": 100,
+      "y": -1100,
+      "locked": false,
+      "comment": "",
+      "color": "#7a171c",
+      "collapsed": false,
+      "fields": [
+        {
+          "name": "SID",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": true,
+          "comment": "",
+          "id": "f_0000000klssvi8",
+          "size": ""
+        },
+        {
+          "name": "conversation_SID",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": "f_0000000lmnc1fh",
+          "size": ""
+        },
+        {
+          "name": "sender_SID",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": "f_0000000mu1x121",
+          "size": ""
+        },
+        {
+          "name": "content",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "message body",
+          "id": "f_0000000n2dy13u",
+          "size": ""
+        },
+        {
+          "name": "messageType_SID",
+          "type": "INTEGER",
+          "default": "0",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "FK to table_MessageType",
+          "id": "f_0000000ozkjr9c",
+          "size": ""
+        },
+        {
+          "name": "createdAt",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": "f_0000000pern4f5",
+          "size": ""
+        }
+      ],
+      "indices": [
+        {
+          "id": 0,
+          "name": "idx_message_conversation",
+          "unique": false,
+          "fields": [
+            "conversation_SID",
+            "createdAt"
+          ]
+        },
+        {
+          "id": 1,
+          "name": "idx_message_sender",
+          "unique": false,
+          "fields": [
+            "sender_SID"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tbl_mt",
+      "name": "table_MessageType",
+      "x": 550,
+      "y": -1100,
+      "locked": false,
+      "comment": "",
+      "color": "#7a171c",
+      "collapsed": false,
+      "fields": [
+        {
+          "name": "SID",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "manually assigned 0,1,2..",
+          "id": "f_0000000qw95pdw",
+          "size": ""
+        },
+        {
+          "name": "name",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": true,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": "f_0000000rc68p5s",
+          "size": ""
+        },
+        {
+          "name": "description",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "unsigned": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": "f_0000000ste4lz1",
+          "size": ""
+        }
+      ],
+      "indices": []
+    },
+    {
+      "id": "tbl_perm",
+      "name": "table_Permission",
+      "x": -500,
+      "y": -900,
+      "locked": false,
+      "comment": "",
+      "color": "#1e7a17",
+      "collapsed": false,
+      "fields": [
+        {
+          "name": "SID",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": true,
+          "comment": "",
+          "id": "f_0000000tfhwtap",
+          "size": ""
+        },
+        {
+          "name": "opCode",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": true,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": "f_0000000u5zgrgw",
+          "size": ""
+        },
+        {
+          "name": "name",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": true,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "e.g. users.create",
+          "id": "f_0000000vv4amvy",
+          "size": ""
+        },
+        {
+          "name": "description",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "unsigned": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": "f_0000000wgzfegb",
+          "size": ""
+        }
+      ],
+      "indices": []
+    },
+    {
+      "id": "tbl_role",
+      "name": "table_Role",
+      "x": 100,
+      "y": -900,
+      "locked": false,
+      "comment": "",
+      "color": "#1e7a17",
+      "collapsed": false,
+      "fields": [
+        {
+          "name": "SID",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": true,
+          "comment": "",
+          "id": "f_0000000x6vuwth",
+          "size": ""
+        },
+        {
+          "name": "name",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": true,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": "f_0000000ywa4wgo",
+          "size": ""
+        },
+        {
+          "name": "isDelegated",
+          "type": "INTEGER",
+          "default": "0",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "1=delegatable",
+          "id": "f_0000000zrnqfwn",
+          "size": ""
+        },
+        {
+          "name": "isActive",
+          "type": "INTEGER",
+          "default": "1",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": "f_00000010j8s46u",
+          "size": ""
+        }
+      ],
+      "indices": []
+    },
+    {
+      "id": "tbl_ur",
+      "name": "table_UserRole",
+      "x": 100,
+      "y": -600,
+      "locked": false,
+      "comment": "",
+      "color": "#1e7a17",
+      "collapsed": false,
+      "fields": [
+        {
+          "name": "SID",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": true,
+          "comment": "",
+          "id": "f_00000011np5z2q",
+          "size": ""
+        },
+        {
+          "name": "user_SID",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": "f_00000012ez4hwu",
+          "size": ""
+        },
+        {
+          "name": "role_SID",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": "f_00000013a6tyim",
+          "size": ""
+        },
+        {
+          "name": "isActive",
+          "type": "INTEGER",
+          "default": "1",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": "f_00000014utmokl",
+          "size": ""
+        }
+      ],
+      "indices": [
+        {
+          "id": 0,
+          "name": "uq_ur_user_role",
+          "unique": true,
+          "fields": [
+            "user_SID",
+            "role_SID"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tbl_rp",
+      "name": "table_RolePermission",
+      "x": 550,
+      "y": -600,
+      "locked": false,
+      "comment": "",
+      "color": "#1e7a17",
+      "collapsed": false,
+      "fields": [
+        {
+          "name": "SID",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": true,
+          "comment": "",
+          "id": "f_000000150nfxsa",
+          "size": ""
+        },
+        {
+          "name": "role_SID",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": "f_00000016ie5gcw",
+          "size": ""
+        },
+        {
+          "name": "permission_SID",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": "f_00000017wkgm3h",
+          "size": ""
+        },
+        {
+          "name": "isActive",
+          "type": "INTEGER",
+          "default": "1",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "unsigned": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "id": "f_00000018ev6kau",
+          "size": ""
+        }
+      ],
+      "indices": [
+        {
+          "id": 0,
+          "name": "uq_rp_role_perm",
+          "unique": true,
+          "fields": [
+            "role_SID",
+            "permission_SID"
+          ]
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "startTableId": "tbl_cm",
+      "startFieldId": "f_0000000g8go21k",
+      "endTableId": "tbl_conv",
+      "endFieldId": "f_0000000a1yohlo",
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Cascade",
+      "name": "fk_cm_conversation",
+      "id": "rel_0000001926u14v"
+    },
+    {
+      "startTableId": "tbl_cm",
+      "startFieldId": "f_0000000hthpu2u",
+      "endTableId": "tbl_user",
+      "endFieldId": "f_00000001136ro6",
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Cascade",
+      "name": "fk_cm_user",
+      "id": "rel_0000001aqwqytg"
+    },
+    {
+      "startTableId": "tbl_msg",
+      "startFieldId": "f_0000000lmnc1fh",
+      "endTableId": "tbl_conv",
+      "endFieldId": "f_0000000a1yohlo",
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Cascade",
+      "name": "fk_msg_conversation",
+      "id": "rel_0000001bkhxdvi"
+    },
+    {
+      "startTableId": "tbl_msg",
+      "startFieldId": "f_0000000mu1x121",
+      "endTableId": "tbl_user",
+      "endFieldId": "f_00000001136ro6",
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Cascade",
+      "name": "fk_msg_sender",
+      "id": "rel_0000001cz9ulca"
+    },
+    {
+      "startTableId": "tbl_msg",
+      "startFieldId": "f_0000000ozkjr9c",
+      "endTableId": "tbl_mt",
+      "endFieldId": "f_0000000qw95pdw",
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "No action",
+      "name": "fk_msg_type",
+      "id": "rel_0000001dbq6656"
+    },
+    {
+      "startTableId": "tbl_conv",
+      "startFieldId": "f_0000000dotyb9u",
+      "endTableId": "tbl_user",
+      "endFieldId": "f_00000001136ro6",
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Cascade",
+      "name": "fk_conv_createdBy",
+      "id": "rel_0000001e0tu3qw"
+    },
+    {
+      "startTableId": "tbl_user",
+      "startFieldId": "f_00000009h2qdqy",
+      "endTableId": "tbl_user",
+      "endFieldId": "f_00000001136ro6",
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Set null",
+      "name": "fk_users_createdBy",
+      "id": "rel_0000001ff3blmy"
+    },
+    {
+      "startTableId": "tbl_ur",
+      "startFieldId": "f_00000012ez4hwu",
+      "endTableId": "tbl_user",
+      "endFieldId": "f_00000001136ro6",
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Cascade",
+      "name": "fk_ur_user",
+      "id": "rel_0000001gjebr57"
+    },
+    {
+      "startTableId": "tbl_ur",
+      "startFieldId": "f_00000013a6tyim",
+      "endTableId": "tbl_role",
+      "endFieldId": "f_0000000x6vuwth",
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Cascade",
+      "name": "fk_ur_role",
+      "id": "rel_0000001hx3drvv"
+    },
+    {
+      "startTableId": "tbl_rp",
+      "startFieldId": "f_00000016ie5gcw",
+      "endTableId": "tbl_role",
+      "endFieldId": "f_0000000x6vuwth",
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Cascade",
+      "name": "fk_rp_role",
+      "id": "rel_0000001incav1r"
+    },
+    {
+      "startTableId": "tbl_rp",
+      "startFieldId": "f_00000017wkgm3h",
+      "endTableId": "tbl_perm",
+      "endFieldId": "f_0000000tfhwtap",
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "Cascade",
+      "name": "fk_rp_perm",
+      "id": "rel_0000001jenbqfq"
+    }
+  ],
+  "notes": [],
+  "subjectAreas": [],
+  "database": "sqlite",
+  "title": "Mashariq WebChat"
+}
