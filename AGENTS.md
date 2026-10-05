@@ -95,6 +95,7 @@ Team reference notes (e.g. `Git_Info.txt`). Not part of the running application.
 
 ## Conventions
 
+- **React components:** Always write class components (`class X extends React.Component`), never function components or hooks.
 - **Source of truth for schema:** `DB_Schema/schema.sql`. Never edit the JSON to change the schema.
 - **Database:** SQLite. Use `better-sqlite3` (synchronous, simple). Enable FKs at startup via `db.pragma('foreign_keys = ON')`.
 - **Realtime:** Socket.IO. Each conversation is a room (`socket.join(conversation_SID)`). Server persists messages to SQLite, then broadcasts to the room.
