@@ -8,16 +8,16 @@ Status legend: ✅ Completed · 🟡 Partial · ⬜ Not started
 |---|---|---|
 | 1.1 Initialize the server project | [task-1.1-init-server.md](task-1.1-init-server.md) | ✅ |
 | 1.2 Initialize the website project | [task-1.2-init-website.md](task-1.2-init-website.md) | ✅ |
-| 1.3 Wire the database to the server | [task-1.3-wire-database.md](task-1.3-wire-database.md) | ⬜ |
-| 1.4 Verify with a health endpoint | [task-1.4-verify-health.md](task-1.4-verify-health.md) | ⬜ |
+| 1.3 Wire the database to the server | [task-1.3-wire-database.md](task-1.3-wire-database.md) | ✅ |
+| 1.4 Verify with a health endpoint | [task-1.4-verify-health.md](task-1.4-verify-health.md) | ✅ |
 
 ## 2. Authentication Slice
 | Task | File | Status |
 |---|---|---|
-| 2.1 Create the user table helpers | [task-2.1-user-helpers.md](task-2.1-user-helpers.md) | ⬜ |
-| 2.2 Build the register and login endpoints | [task-2.2-auth-endpoints.md](task-2.2-auth-endpoints.md) | ⬜ |
-| 2.3 Add the auth middleware | [task-2.3-auth-middleware.md](task-2.3-auth-middleware.md) | ⬜ |
-| 2.4 Test the auth flow | [task-2.4-test-auth.md](task-2.4-test-auth.md) | ⬜ |
+| 2.1 Create the user table helpers | [task-2.1-user-helpers.md](task-2.1-user-helpers.md) | ✅ |
+| 2.2 Build the register and login endpoints | [task-2.2-auth-endpoints.md](task-2.2-auth-endpoints.md) | ✅ |
+| 2.3 Add the auth middleware | [task-2.3-auth-middleware.md](task-2.3-auth-middleware.md) | ✅ |
+| 2.4 Test the auth flow | [task-2.4-test-auth.md](task-2.4-test-auth.md) | ✅ |
 
 ## 3. Conversations Slice
 | Task | File | Status |

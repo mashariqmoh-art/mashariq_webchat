@@ -1,7 +1,7 @@
 # Task 2.3 — Add the auth middleware
 
 **Section:** 2. Authentication Slice
-**Status:** ⬜ Not started
+**Status:** ✅ Completed
 
 ## WHAT
 Create `server/src/middleware/auth.js` that verifies the `Authorization: Bearer <token>` header and attaches `req.user`.

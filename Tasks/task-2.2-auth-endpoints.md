@@ -1,7 +1,7 @@
 # Task 2.2 — Build the register and login endpoints
 
 **Section:** 2. Authentication Slice
-**Status:** ⬜ Not started
+**Status:** ✅ Completed
 
 ## WHAT
 Add `server/src/routes/auth.js` with `POST /api/auth/register` and `POST /api/auth/login`.
