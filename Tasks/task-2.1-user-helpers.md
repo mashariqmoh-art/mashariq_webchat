@@ -1,7 +1,7 @@
 # Task 2.1 — Create the user table helpers
 
 **Section:** 2. Authentication Slice
-**Status:** ⬜ Not started
+**Status:** ✅ Completed
 
 ## WHAT
 Add `server/src/db/users.js` with functions to create a user, find by email, and find by SID.

@@ -1,7 +1,7 @@
 # Task 1.4 — Verify with a health endpoint
 
 **Section:** 1. Foundation — Database & Project Skeleton
-**Status:** ⬜ Not started
+**Status:** ✅ Completed
 
 ## WHAT
 Add `GET /api/health` that returns `{ ok: true }`.

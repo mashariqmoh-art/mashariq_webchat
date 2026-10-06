@@ -1,7 +1,7 @@
 # Task 1.3 — Wire the database to the server
 
 **Section:** 1. Foundation — Database & Project Skeleton
-**Status:** ⬜ Not started
+**Status:** ✅ Completed
 
 ## WHAT
 Create `server/src/db/db.js` that opens `chat.sqlite`, runs `schema.sql`, and exports a `db` object.

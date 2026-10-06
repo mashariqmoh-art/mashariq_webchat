@@ -1,7 +1,7 @@
 # Task 2.2 — Test the auth flow
 
 **Section:** 2. Authentication Slice
-**Status:** ⬜ Not started
+**Status:** ✅ Completed
 
 ## WHAT
 Write a small test or use `curl` to register a user, log in, and call a protected route.
