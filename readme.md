@@ -46,8 +46,8 @@ npm run dev
 Ubuntu (single terminal):
 
 ```bash
-cd ~/code/mashariq_webchat/server && npm run dev &
-cd ~/code/mashariq_webchat/website && npm run dev
+cd server && npm run dev &
+cd website && npm run dev
 ```
 
 Windows PowerShell (opens two windows):
