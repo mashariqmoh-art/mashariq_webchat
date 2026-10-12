@@ -1,7 +1,7 @@
 const express = require('express');
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const users = require('../db/users');
+const users = require('../db/user');
 
 class AuthRoutes {
   constructor() {
