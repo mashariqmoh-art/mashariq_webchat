@@ -22,10 +22,10 @@ Status legend: ✅ Completed · 🟡 Partial · ⬜ Not started
 ## 3. Conversations Slice
 | Task | File | Status |
 |---|---|---|
-| 3.1 Add conversation DB helpers | [task-3.1-conversation-helpers.md](task-3.1-conversation-helpers.md) | ⬜ |
-| 3.2 Build conversation REST endpoints | [task-3.2-conversation-endpoints.md](task-3.2-conversation-endpoints.md) | ⬜ |
-| 3.3 Create the chat layout in React | [task-3.3-chat-layout.md](task-3.3-chat-layout.md) | ⬜ |
-| 3.4 Create a shared API client | [task-3.4-api-client.md](task-3.4-api-client.md) | ⬜ |
+| 3.1 Add conversation DB helpers | [task-3.1-conversation-helpers.md](task-3.1-conversation-helpers.md) | ✅ |
+| 3.2 Build conversation REST endpoints | [task-3.2-conversation-endpoints.md](task-3.2-conversation-endpoints.md) | ✅ |
+| 3.3 Create the chat layout in React | [task-3.3-chat-layout.md](task-3.3-chat-layout.md) | ✅ |
+| 3.4 Create a shared API client | [task-3.4-api-client.md](task-3.4-api-client.md) | ✅ |
 
 ## 4. Real-Time Messaging Slice
 | Task | File | Status |
