@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const db = require('./db/db');
 const authRoutes = require('./routes/auth');
+const conversationRoutes = require('./routes/conversations');
 const auth = require('./middleware/auth');
 
 class Server {
@@ -26,6 +27,7 @@ class Server {
     });
 
     this.app.use('/api/auth', authRoutes);
+    this.app.use('/api/conversations', conversationRoutes);
 
     this.app.get('/api/me', auth.authenticate, (req, res) => {
       res.json({ user: req.user });
