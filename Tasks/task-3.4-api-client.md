@@ -1,7 +1,7 @@
 # Task 3.4 — Create a shared API client
 
 **Section:** 3. Conversations Slice
-**Status:** ⬜ Not started
+**Status:** ✅ Completed
 
 ## WHAT
 Add `website/src/shared/api.js` that wraps `fetch` and attaches the JWT token.

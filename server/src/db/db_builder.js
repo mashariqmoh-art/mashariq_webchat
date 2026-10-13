@@ -1,5 +1,7 @@
 const userMysql = require('./users_mysql');
 const userOracle = require('./user_oracle');
+const conversationMysql = require('./conversations_mysql');
+const conversationOracle = require('./conversations_oracle');
 
 class DBBuilder {
   constructor() {
@@ -13,6 +15,16 @@ class DBBuilder {
       case 'mysql':
       default:
         return userMysql;
+    }
+  }
+
+  buildConversationRepository() {
+    switch (this.engine) {
+      case 'oracle':
+        return conversationOracle;
+      case 'mysql':
+      default:
+        return conversationMysql;
     }
   }
 }

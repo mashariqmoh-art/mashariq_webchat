@@ -15,6 +15,10 @@ class Database {
   prepare(sql) {
     return this.db.prepare(sql);
   }
+
+  transaction(work) {
+    return this.db.transaction(work);
+  }
 }
 
 module.exports = new Database();
