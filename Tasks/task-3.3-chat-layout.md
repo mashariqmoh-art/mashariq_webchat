@@ -1,7 +1,7 @@
 # Task 3.3 — Create the chat layout in React
 
 **Section:** 3. Conversations Slice
-**Status:** ⬜ Not started
+**Status:** ✅ Completed
 
 ## WHAT
 Build `website/src/chat/ChatLayout.jsx` with a left sidebar (conversation list) and right panel (message area).
