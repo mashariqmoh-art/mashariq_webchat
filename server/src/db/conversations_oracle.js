@@ -3,6 +3,10 @@ class ConversationOracleRepository {
     return { SID: 1, name: null, isGroup: 0, createdBy_SID: creatorSID, members: [] };
   }
 
+  createGroup({ creatorSID, name, memberSIDs = [] }) {
+    return { SID: 1, name, isGroup: 1, createdBy_SID: creatorSID, members: [] };
+  }
+
   addMember(conversationSID, userSID, isGroupAdmin = 0) {
     return null;
   }
