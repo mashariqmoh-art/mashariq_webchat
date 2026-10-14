@@ -13,6 +13,10 @@ class User {
     return this.repo.findUserByEmail(email);
   }
 
+  findUserByNickName(nickName) {
+    return this.repo.findUserByNickName(nickName);
+  }
+
   findUserBySID(sid) {
     return this.repo.findUserBySID(sid);
   }

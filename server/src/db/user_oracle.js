@@ -7,6 +7,10 @@ class UserOracleRepository {
     return null;
   }
 
+  findUserByNickName(nickName) {
+    return null;
+  }
+
   findUserBySID(sid) {
     return null;
   }

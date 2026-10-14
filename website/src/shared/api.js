@@ -24,6 +24,17 @@ class ApiClient {
     return localStorage.getItem('token');
   }
 
+  getCurrentUser() {
+    const token = this.getToken();
+    if (!token) return null;
+
+    try {
+      return JSON.parse(atob(token.split('.')[1]));
+    } catch (err) {
+      return null;
+    }
+  }
+
   async request(path, options = {}) {
     const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
     const token = this.getToken();
