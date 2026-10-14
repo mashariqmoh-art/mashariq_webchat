@@ -1,4 +1,6 @@
 import React from 'react';
+import MessageList from './MessageList.jsx';
+import MessageComposer from './MessageComposer.jsx';
 
 export default class MessageView extends React.Component {
   render() {
@@ -26,11 +28,9 @@ export default class MessageView extends React.Component {
           <small className="text-muted">{memberNames || 'No members'}</small>
         </div>
 
-        <div className="flex-grow-1 p-3 bg-light d-flex align-items-center justify-content-center">
-          <div className="text-center text-muted">
-            <div className="display-6 mb-2">💬</div>
-            <div>Message thread coming soon.</div>
-          </div>
+        <div className="flex-grow-1 overflow-hidden d-flex flex-column">
+          <MessageList conversation={conversation} />
+          <MessageComposer conversation={conversation} />
         </div>
       </div>
     );
