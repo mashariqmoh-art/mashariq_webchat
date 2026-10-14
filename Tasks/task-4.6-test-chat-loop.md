@@ -1,7 +1,7 @@
 # Task 4.6 — Test the chat loop
 
 **Section:** 4. Real-Time Messaging Slice
-**Status:** ⬜ Not started
+**Status:** ✅ Completed
 
 ## WHAT
 Open two browser tabs, log in as two different users, and exchange a message.

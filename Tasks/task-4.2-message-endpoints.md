@@ -1,7 +1,7 @@
 # Task 4.2 — Build the message REST endpoints
 
 **Section:** 4. Real-Time Messaging Slice
-**Status:** ⬜ Not started
+**Status:** ✅ Completed
 
 ## WHAT
 Add `server/src/routes/messages.js`.
