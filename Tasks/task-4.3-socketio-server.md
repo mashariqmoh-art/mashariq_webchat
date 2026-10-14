@@ -1,7 +1,7 @@
 # Task 4.3 — Add Socket.IO to the server
 
 **Section:** 4. Real-Time Messaging Slice
-**Status:** ⬜ Not started
+**Status:** ✅ Completed
 
 ## WHAT
 Integrate Socket.IO in `server/src/index.js` and create `server/src/sockets/chat.js`.

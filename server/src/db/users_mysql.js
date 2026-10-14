@@ -16,6 +16,10 @@ class UserRepository {
     return db.prepare('SELECT * FROM table_User WHERE email = ?').get(email);
   }
 
+  findUserByNickName(nickName) {
+    return db.prepare('SELECT * FROM table_User WHERE nickName = ?').get(nickName);
+  }
+
   findUserBySID(sid) {
     return db.prepare('SELECT * FROM table_User WHERE SID = ?').get(sid);
   }

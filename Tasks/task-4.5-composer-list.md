@@ -1,7 +1,7 @@
 # Task 4.5 — Build the message composer and message list
 
 **Section:** 4. Real-Time Messaging Slice
-**Status:** ⬜ Not started
+**Status:** ✅ Completed
 
 ## WHAT
 Add `website/src/chat/MessageComposer.jsx` and `website/src/chat/MessageList.jsx`.

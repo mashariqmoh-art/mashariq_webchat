@@ -1,9 +1,18 @@
 import React from 'react';
+import MessageList from './MessageList';
+import MessageComposer from './MessageComposer';
 
 class MessageView extends React.Component {
   constructor(props) {
     super(props);
+    this.messageListRef = React.createRef();
   }
+
+  handleOptimistic = (message) => {
+    if (this.messageListRef.current) {
+      this.messageListRef.current.appendOptimistic(message);
+    }
+  };
 
   title(conversation) {
     if (conversation.isGroup) {
@@ -28,9 +37,15 @@ class MessageView extends React.Component {
         <div className="border-bottom p-3">
           <h5 className="mb-0">{this.title(conversation)}</h5>
         </div>
-        <div className="flex-grow-1 p-3 text-muted">
-          Messages will appear here.
-        </div>
+        <MessageList
+          key={conversation.SID}
+          ref={this.messageListRef}
+          conversationSID={conversation.SID}
+        />
+        <MessageComposer
+          conversationSID={conversation.SID}
+          onOptimistic={this.handleOptimistic}
+        />
       </div>
     );
   }

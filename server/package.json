@@ -1,11 +1,13 @@
 {
   "name": "mashariq-webchat-server",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Mashariq WebChat backend — Express + Socket.IO + SQLite",
   "main": "src/index.js",
   "scripts": {
     "dev": "nodemon src/index.js",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "token": "node src/scripts/generate_token.js",
+    "seed": "node src/scripts/seed_users.js"
   },
   "keywords": [],
   "author": "",
