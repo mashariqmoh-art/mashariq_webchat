@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: require('path').join(__dirname, '../.env') });
 
 const express = require('express');
 const http = require('http');
@@ -42,8 +42,9 @@ class Server {
     });
 
     this.app.use('/api/auth', authRoutes);
-    this.app.use('/api/conversations', conversationRoutes);
     this.app.use('/api/conversations', messageRoutes);
+    this.app.use('/api/conversations', conversationRoutes);
+    this.app.use('/api/groups', conversationRoutes.groupRouter);
 
     this.app.get('/api/me', auth.authenticate, (req, res) => {
       res.json({ user: req.user });

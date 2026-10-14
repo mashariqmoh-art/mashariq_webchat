@@ -18,6 +18,27 @@ class ConversationRepository {
     return this.getConversationBySID(createTx());
   }
 
+  createGroup({ creatorSID, name, memberSIDs = [] }) {
+    const insertConversation = db.prepare(`
+      INSERT INTO table_Conversation (name, isGroup, createdBy_SID)
+      VALUES (?, 1, ?)
+    `);
+
+    const createTx = db.transaction(() => {
+      const result = insertConversation.run(name, creatorSID);
+      const conversationSID = result.lastInsertRowid;
+      this.addMember(conversationSID, creatorSID, 1);
+      for (const memberSID of memberSIDs) {
+        if (Number(memberSID) !== creatorSID) {
+          this.addMember(conversationSID, Number(memberSID));
+        }
+      }
+      return conversationSID;
+    });
+
+    return this.getConversationBySID(createTx());
+  }
+
   addMember(conversationSID, userSID, isGroupAdmin = 0) {
     return db.prepare(`
       INSERT INTO table_ConversationMember (conversation_SID, user_SID, isGroupAdmin)
