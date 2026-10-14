@@ -11,6 +11,10 @@ class ConversationRoutes {
     this.router.get('/', this.list.bind(this));
     this.router.post('/', this.create.bind(this));
     this.router.get('/:sid', this.getOne.bind(this));
+
+    this.groupRouter = express.Router();
+    this.groupRouter.use(auth.authenticate);
+    this.groupRouter.post('/', this.createGroup.bind(this));
   }
 
   list(req, res) {
@@ -44,6 +48,31 @@ class ConversationRoutes {
     res.status(201).json({ conversationSID: conversation.SID });
   }
 
+  createGroup(req, res) {
+    const { name, memberSIDs } = req.body || {};
+
+    if (!name || !name.trim()) {
+      return res.status(400).json({ error: 'name is required' });
+    }
+
+    if (!Array.isArray(memberSIDs)) {
+      return res.status(400).json({ error: 'memberSIDs must be an array' });
+    }
+
+    for (const memberSID of memberSIDs) {
+      if (!users.findUserBySID(memberSID)) {
+        return res.status(404).json({ error: `User not found: ${memberSID}` });
+      }
+    }
+
+    const conversation = conversations.createGroup({
+      creatorSID: req.user.userSID,
+      name: name.trim(),
+      memberSIDs: memberSIDs.map(Number),
+    });
+    res.status(201).json({ conversationSID: conversation.SID });
+  }
+
   getOne(req, res) {
     const sid = Number(req.params.sid);
     const conversation = conversations.getConversationBySID(sid);
@@ -60,4 +89,6 @@ class ConversationRoutes {
   }
 }
 
-module.exports = new ConversationRoutes().router;
+const conversationRoutes = new ConversationRoutes();
+module.exports = conversationRoutes.router;
+module.exports.groupRouter = conversationRoutes.groupRouter;
