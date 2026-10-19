@@ -17,6 +17,7 @@ const db = require('./db/db');
 const authRoutes = require('./routes/auth');
 const conversationRoutes = require('./routes/conversations');
 const messageRoutes = require('./routes/messages');
+const adminRoutes = require('./routes/admin');
 const auth = require('./middleware/auth');
 const ChatSockets = require('./sockets/chat');
 
@@ -54,6 +55,7 @@ class Server {
     this.app.use('/api/conversations', messageRoutes);
     this.app.use('/api/conversations', conversationRoutes);
     this.app.use('/api/groups', conversationRoutes.groupRouter);
+    this.app.use('/api/admin', adminRoutes);
 
     this.app.get('/api/me', auth.authenticate, (req, res) => {
       res.json({ user: req.user });
