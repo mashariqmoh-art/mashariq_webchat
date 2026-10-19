@@ -27,6 +27,9 @@ class ConversationList extends React.Component {
             className={`list-group-item list-group-item-action ${conversation.SID === selectedSID ? 'active' : ''}`}
             onClick={() => onSelect(conversation.SID)}
           >
+            {conversation.isGroup ? (
+              <span className="badge bg-secondary me-2">Group</span>
+            ) : null}
             {this.displayName(conversation)}
           </button>
         ))}

@@ -40,9 +40,9 @@ Status legend: ✅ Completed · 🟡 Partial · ⬜ Not started
 ## 5. Group Chat Slice
 | Task | File | Status |
 |---|---|---|
-| 5.1 Extend conversation helpers for groups | [task-5.1-group-helpers.md](task-5.1-group-helpers.md) | ⬜ |
-| 5.2 Add group REST endpoint | [task-5.2-group-endpoint.md](task-5.2-group-endpoint.md) | ⬜ |
-| 5.3 Update the UI to distinguish 1:1 vs group | [task-5.3-group-ui.md](task-5.3-group-ui.md) | ⬜ |
+| 5.1 Extend conversation helpers for groups | [task-5.1-group-helpers.md](task-5.1-group-helpers.md) | ✅ |
+| 5.2 Add group REST endpoint | [task-5.2-group-endpoint.md](task-5.2-group-endpoint.md) | ✅ |
+| 5.3 Update the UI to distinguish 1:1 vs group | [task-5.3-group-ui.md](task-5.3-group-ui.md) | ✅ |
 
 ## 6. Minimal Admin Slice
 | Task | File | Status |

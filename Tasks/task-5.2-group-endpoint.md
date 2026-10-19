@@ -1,7 +1,7 @@
 # Task 5.2 — Add group REST endpoint
 
 **Section:** 5. Group Chat Slice
-**Status:** ⬜ Not started
+**Status:** ✅ Complete
 
 ## WHAT
 Add `POST /api/groups` in `conversations.js`.

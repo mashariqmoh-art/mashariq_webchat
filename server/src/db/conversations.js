@@ -9,8 +9,16 @@ class Conversation {
     return this.repo.createConversation(data);
   }
 
+  createGroup(data) {
+    return this.repo.createGroup(data);
+  }
+
   addMember(conversationSID, userSID, isGroupAdmin) {
     return this.repo.addMember(conversationSID, userSID, isGroupAdmin);
+  }
+
+  addMemberToConversation(data) {
+    return this.repo.addMemberToConversation(data);
   }
 
   getConversationsForUser(userSID) {

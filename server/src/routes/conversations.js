@@ -7,10 +7,13 @@ class ConversationRoutes {
   constructor() {
     this.router = express.Router();
     this.router.use(auth.authenticate);
+    this.groupsRouter = express.Router();
+    this.groupsRouter.use(auth.authenticate);
 
     this.router.get('/', this.list.bind(this));
     this.router.post('/', this.create.bind(this));
     this.router.get('/:sid', this.getOne.bind(this));
+    this.groupsRouter.post('/', this.createGroup.bind(this));
   }
 
   list(req, res) {
@@ -44,6 +47,41 @@ class ConversationRoutes {
     res.status(201).json({ conversationSID: conversation.SID });
   }
 
+  createGroup(req, res) {
+    const { name, memberSIDs } = req.body || {};
+    const groupName = typeof name === 'string' ? name.trim() : '';
+
+    if (!groupName) {
+      return res.status(400).json({ error: 'name is required' });
+    }
+
+    if (!Array.isArray(memberSIDs) || memberSIDs.some((sid) => {
+      const hasValidType = typeof sid === 'number'
+        || (typeof sid === 'string' && /^\d+$/.test(sid));
+      return !hasValidType || !Number.isSafeInteger(Number(sid)) || Number(sid) <= 0;
+    })) {
+      return res.status(400).json({ error: 'memberSIDs must be an array of valid user SIDs' });
+    }
+
+    const memberIDs = [...new Set(memberSIDs.map(Number))]
+      .filter((sid) => sid !== req.user.userSID);
+
+    if (memberIDs.length === 0) {
+      return res.status(400).json({ error: 'At least one other member is required' });
+    }
+
+    if (memberIDs.some((sid) => !users.findUserBySID(sid))) {
+      return res.status(404).json({ error: 'One or more users were not found' });
+    }
+
+    const conversation = conversations.createGroup({
+      creatorSID: req.user.userSID,
+      name: groupName,
+      memberSIDs: memberIDs,
+    });
+    res.status(201).json({ conversationSID: conversation.SID });
+  }
+
   getOne(req, res) {
     const sid = Number(req.params.sid);
     const conversation = conversations.getConversationBySID(sid);
@@ -60,4 +98,7 @@ class ConversationRoutes {
   }
 }
 
-module.exports = new ConversationRoutes().router;
+const routes = new ConversationRoutes();
+routes.router.groupsRouter = routes.groupsRouter;
+
+module.exports = routes.router;

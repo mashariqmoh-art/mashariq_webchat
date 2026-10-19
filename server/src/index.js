@@ -43,6 +43,7 @@ class Server {
 
     this.app.use('/api/auth', authRoutes);
     this.app.use('/api/conversations', conversationRoutes);
+    this.app.use('/api/groups', conversationRoutes.groupsRouter);
     this.app.use('/api/conversations', messageRoutes);
 
     this.app.get('/api/me', auth.authenticate, (req, res) => {

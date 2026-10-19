@@ -1,7 +1,7 @@
 # Task 5.3 — Update the UI to distinguish 1:1 vs group
 
 **Section:** 5. Group Chat Slice
-**Status:** ⬜ Not started
+**Status:** ✅ Complete
 
 ## WHAT
 Update `ConversationList` to show a group icon or group name.

@@ -1,7 +1,7 @@
 # Task 5.1 — Extend conversation helpers for groups
 
 **Section:** 5. Group Chat Slice
-**Status:** ⬜ Not started
+**Status:** ✅ Complete
 
 ## WHAT
 Update `server/src/db/conversations.js` to support `isGroup=1`, group names, and multiple members.
