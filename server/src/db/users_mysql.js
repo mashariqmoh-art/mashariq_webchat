@@ -2,13 +2,13 @@ const bcryptjs = require('bcryptjs');
 const db = require('./db');
 
 class UserRepository {
-  createUser({ name, email, nickName, mobileNo, password }) {
+  createUser({ name, email, nickName, mobileNo, password, createdBySID = null }) {
     const passwordHash = bcryptjs.hashSync(password, 10);
     const stmt = db.prepare(`
-      INSERT INTO table_User (name, email, nickName, mobileNo, password)
-      VALUES (?, ?, ?, ?, ?)
+      INSERT INTO table_User (name, email, nickName, mobileNo, password, createdBy_SID)
+      VALUES (?, ?, ?, ?, ?, ?)
     `);
-    const result = stmt.run(name, email, nickName, mobileNo, passwordHash);
+    const result = stmt.run(name, email, nickName, mobileNo, passwordHash, createdBySID);
     return this.findUserBySID(result.lastInsertRowid);
   }
 
@@ -22,6 +22,50 @@ class UserRepository {
 
   findUserBySID(sid) {
     return db.prepare('SELECT * FROM table_User WHERE SID = ?').get(sid);
+  }
+
+  listUsers() {
+    return db.prepare(`
+      SELECT u.SID, u.name, u.email, u.nickName, u.mobileNo, u.isActive, u.createdAt,
+             (SELECT GROUP_CONCAT(r.name, ', ')
+              FROM table_UserRole ur
+              JOIN table_Role r ON r.SID = ur.role_SID AND r.isActive = 1
+              WHERE ur.user_SID = u.SID AND ur.isActive = 1) AS roles
+      FROM table_User u
+      ORDER BY u.SID
+    `).all();
+  }
+
+  userHasPermission(userSID, permissionName) {
+    return !!db.prepare(`
+      SELECT 1
+      FROM table_UserRole ur
+      JOIN table_Role r ON r.SID = ur.role_SID AND r.isActive = 1
+      JOIN table_RolePermission rp ON rp.role_SID = ur.role_SID AND rp.isActive = 1
+      JOIN table_Permission p ON p.SID = rp.permission_SID
+      WHERE ur.user_SID = ? AND ur.isActive = 1 AND p.name = ?
+    `).get(userSID, permissionName);
+  }
+
+  assignRole(userSID, roleSID) {
+    db.prepare(`
+      INSERT INTO table_UserRole (user_SID, role_SID)
+      VALUES (?, ?)
+      ON CONFLICT(user_SID, role_SID) DO UPDATE SET isActive = 1
+    `).run(userSID, roleSID);
+  }
+
+  listRoles() {
+    return db.prepare(`
+      SELECT SID, name, isDelegated, isActive
+      FROM table_Role
+      WHERE isActive = 1
+      ORDER BY SID
+    `).all();
+  }
+
+  findRoleByName(name) {
+    return db.prepare('SELECT * FROM table_Role WHERE name = ? AND isActive = 1').get(name);
   }
 }
 

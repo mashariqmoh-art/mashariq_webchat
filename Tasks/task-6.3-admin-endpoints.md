@@ -1,7 +1,7 @@
 # Task 6.3 — Build minimal admin users endpoint
 
 **Section:** 6. Minimal Admin Slice
-**Status:** ⬜ Not started
+**Status:** ✅ Completed
 
 ## WHAT
 Add `server/src/routes/admin.js` with `GET /api/admin/users` and `POST /api/admin/users`.

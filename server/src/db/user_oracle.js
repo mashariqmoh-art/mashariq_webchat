@@ -14,6 +14,26 @@ class UserOracleRepository {
   findUserBySID(sid) {
     return null;
   }
+
+  listUsers() {
+    return [];
+  }
+
+  userHasPermission(userSID, permissionName) {
+    return false;
+  }
+
+  assignRole(userSID, roleSID) {
+    return null;
+  }
+
+  listRoles() {
+    return [];
+  }
+
+  findRoleByName(name) {
+    return null;
+  }
 }
 
 module.exports = new UserOracleRepository();

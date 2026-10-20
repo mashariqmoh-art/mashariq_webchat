@@ -1,7 +1,7 @@
 # Task 6.2 — Seed the first admin user
 
 **Section:** 6. Minimal Admin Slice
-**Status:** ⬜ Not started
+**Status:** ✅ Completed
 
 ## WHAT
 Add a script `server/scripts/seedAdmin.js` or a SQL seed to create `admin@example.com` with the `admin` role.
