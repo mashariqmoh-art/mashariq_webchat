@@ -3,7 +3,7 @@ class ConversationOracleRepository {
     return { SID: 1, name: null, isGroup: 0, createdBy_SID: creatorSID, members: [] };
   }
 
-  createGroup({ creatorSID, name, memberSIDs }) {
+  createGroup({ creatorSID, name, memberSIDs = [] }) {
     const members = [...new Set([creatorSID, ...memberSIDs])].map((user_SID) => ({
       user_SID,
       isGroupAdmin: user_SID === creatorSID ? 1 : 0,

@@ -18,7 +18,7 @@ class ConversationRepository {
     return this.getConversationBySID(createTx());
   }
 
-  createGroup({ creatorSID, name, memberSIDs }) {
+  createGroup({ creatorSID, name, memberSIDs = [] }) {
     const createTx = db.transaction(() => {
       const result = db.prepare(`
         INSERT INTO table_Conversation (name, isGroup, createdBy_SID)
@@ -28,11 +28,11 @@ class ConversationRepository {
 
       this.addMember(conversationSID, creatorSID, 1);
       for (const userSID of memberSIDs) {
-        if (userSID !== creatorSID) {
-          this.addMember(conversationSID, userSID);
+        const memberSID = Number(userSID);
+        if (memberSID !== creatorSID) {
+          this.addMember(conversationSID, memberSID);
         }
       }
-
       return conversationSID;
     });
 

@@ -7,13 +7,14 @@ class ConversationRoutes {
   constructor() {
     this.router = express.Router();
     this.router.use(auth.authenticate);
-    this.groupsRouter = express.Router();
-    this.groupsRouter.use(auth.authenticate);
 
     this.router.get('/', this.list.bind(this));
     this.router.post('/', this.create.bind(this));
     this.router.get('/:sid', this.getOne.bind(this));
-    this.groupsRouter.post('/', this.createGroup.bind(this));
+
+    this.groupRouter = express.Router();
+    this.groupRouter.use(auth.authenticate);
+    this.groupRouter.post('/', this.createGroup.bind(this));
   }
 
   list(req, res) {
@@ -56,7 +57,7 @@ class ConversationRoutes {
     }
 
     if (!Array.isArray(memberSIDs) || memberSIDs.some((sid) => {
-      const hasValidType = typeof sid === 'number'
+      const hasValidType = Number.isSafeInteger(sid)
         || (typeof sid === 'string' && /^\d+$/.test(sid));
       return !hasValidType || !Number.isSafeInteger(Number(sid)) || Number(sid) <= 0;
     })) {
@@ -98,7 +99,6 @@ class ConversationRoutes {
   }
 }
 
-const routes = new ConversationRoutes();
-routes.router.groupsRouter = routes.groupsRouter;
-
-module.exports = routes.router;
+const conversationRoutes = new ConversationRoutes();
+module.exports = conversationRoutes.router;
+module.exports.groupRouter = conversationRoutes.groupRouter;
