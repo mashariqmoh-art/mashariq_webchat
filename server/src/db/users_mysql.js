@@ -23,6 +23,15 @@ class UserRepository {
   findUserBySID(sid) {
     return db.prepare('SELECT * FROM table_User WHERE SID = ?').get(sid);
   }
+
+  findAvailableUsers(excludeSID) {
+    return db.prepare(`
+      SELECT SID, name, nickName
+      FROM table_User
+      WHERE isActive = 1 AND SID != ?
+      ORDER BY nickName COLLATE NOCASE
+    `).all(excludeSID);
+  }
 }
 
 module.exports = new UserRepository();

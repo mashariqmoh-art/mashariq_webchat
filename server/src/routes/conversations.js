@@ -10,6 +10,7 @@ class ConversationRoutes {
 
     this.router.get('/', this.list.bind(this));
     this.router.post('/', this.create.bind(this));
+    this.router.get('/users', this.listUsers.bind(this));
     this.router.get('/:sid', this.getOne.bind(this));
 
     this.groupRouter = express.Router();
@@ -19,6 +20,10 @@ class ConversationRoutes {
 
   list(req, res) {
     res.json({ conversations: conversations.getConversationsForUser(req.user.userSID) });
+  }
+
+  listUsers(req, res) {
+    res.json({ users: users.findAvailableUsers(req.user.userSID) });
   }
 
   create(req, res) {

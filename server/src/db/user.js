@@ -20,6 +20,10 @@ class User {
   findUserBySID(sid) {
     return this.repo.findUserBySID(sid);
   }
+
+  findAvailableUsers(excludeSID) {
+    return this.repo.findAvailableUsers(excludeSID);
+  }
 }
 
 module.exports = new User();

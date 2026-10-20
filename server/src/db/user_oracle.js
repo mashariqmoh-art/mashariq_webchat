@@ -14,6 +14,10 @@ class UserOracleRepository {
   findUserBySID(sid) {
     return null;
   }
+
+  findAvailableUsers(excludeSID) {
+    return [];
+  }
 }
 
 module.exports = new UserOracleRepository();
