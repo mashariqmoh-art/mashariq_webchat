@@ -29,8 +29,9 @@ class ConversationRepository {
       const conversationSID = result.lastInsertRowid;
       this.addMember(conversationSID, creatorSID, 1);
       for (const memberSID of memberSIDs) {
-        if (Number(memberSID) !== creatorSID) {
-          this.addMember(conversationSID, Number(memberSID));
+        const numericMemberSID = Number(memberSID);
+        if (numericMemberSID !== creatorSID) {
+          this.addMember(conversationSID, numericMemberSID);
         }
       }
       return conversationSID;

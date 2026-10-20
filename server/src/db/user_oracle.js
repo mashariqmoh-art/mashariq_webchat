@@ -34,6 +34,9 @@ class UserOracleRepository {
   findRoleByName(name) {
     return null;
   }
+  findAvailableUsers(excludeSID) {
+    return [];
+  }
 }
 
 module.exports = new UserOracleRepository();

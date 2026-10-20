@@ -76,35 +76,68 @@ class MessageList extends React.Component {
     return this.currentUser && message.sender_SID === this.currentUser.userSID;
   }
 
+  formatTime(value) {
+    if (!value) return '';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return '';
+    return new Intl.DateTimeFormat(this.props.language === 'ar' ? 'ar' : 'en', {
+      hour: 'numeric',
+      minute: '2-digit',
+    }).format(date);
+  }
+
   render() {
     const { messages, typingNickName, error } = this.state;
+    const isArabic = this.props.language === 'ar';
 
     return (
-      <div className="flex-grow-1 overflow-auto p-3" ref={this.containerRef}>
-        {error && <div className="text-danger">{error}</div>}
+      <div className="chat-message-scroll" ref={this.containerRef}>
+        {error && <div className="chat-message-error" role="alert">{error}</div>}
         {!error && messages.length === 0 && (
-          <div className="text-muted">No messages yet. Say hello!</div>
-        )}
-        {messages.map((message) => (
-          <div
-            key={message.SID}
-            className={`d-flex mb-2 ${this.isOwn(message) ? 'justify-content-end' : ''}`}
-          >
-            <div
-              className={`px-3 py-2 rounded ${this.isOwn(message) ? 'bg-primary text-white' : 'bg-light'}`}
-              style={{ maxWidth: '70%' }}
-            >
-              {!this.isOwn(message) && (
-                <div className="small text-muted">{message.senderNickName}</div>
-              )}
-              <div>{message.content}</div>
-              {message.pending && <div className="small opacity-75">sending…</div>}
-            </div>
+          <div className="chat-no-messages">
+            <span aria-hidden="true">✳</span>
+            <p>{isArabic ? 'لا توجد رسائل بعد. ابدأ بالسلام!' : 'No messages yet. Say hello!'}</p>
           </div>
-        ))}
-        {typingNickName && (
-          <div className="text-muted small">{typingNickName} is typing…</div>
         )}
+        <div className="chat-message-list">
+          {messages.map((message) => {
+            const ownMessage = this.isOwn(message);
+            return (
+              <div
+                key={message.SID}
+                className={`chat-message-row ${ownMessage ? 'own' : ''}`}
+              >
+                {!ownMessage && (
+                  <span className="chat-message-avatar">
+                    {(message.senderNickName || '?').trim().charAt(0).toLocaleUpperCase()}
+                  </span>
+                )}
+                <div className={`chat-bubble ${ownMessage ? 'own' : ''}`}>
+                  {!ownMessage && message.senderNickName && (
+                    <div className="chat-message-sender">{message.senderNickName}</div>
+                  )}
+                  <div className="chat-message-content">{message.content}</div>
+                  <div className="chat-message-meta">
+                    <time dateTime={message.createdAt}>{this.formatTime(message.createdAt)}</time>
+                    {message.pending && (
+                      <span>{isArabic ? 'جارٍ الإرسال…' : 'Sending…'}</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+          {typingNickName && (
+            <div className="chat-typing">
+              <span className="chat-typing-dots" aria-hidden="true"><i /><i /><i /></span>
+              <span>
+                {isArabic
+                  ? `${typingNickName} يكتب الآن…`
+                  : `${typingNickName} is typing…`}
+              </span>
+            </div>
+          )}
+        </div>
       </div>
     );
   }
