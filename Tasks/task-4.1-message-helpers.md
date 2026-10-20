@@ -1,7 +1,7 @@
 # Task 4.1 — Add message DB helpers
 
 **Section:** 4. Real-Time Messaging Slice
-**Status:** ⬜ Not started
+**Status:** ✅ Completed
 
 ## WHAT
 Create `server/src/db/messages.js` to insert and fetch messages.

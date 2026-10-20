@@ -1,7 +1,7 @@
 # Task 6.4 — Build a minimal admin UI
 
 **Section:** 6. Minimal Admin Slice
-**Status:** ⬜ Not started
+**Status:** ✅ Completed
 
 ## WHAT
 Create `website/src/admin/AdminPanel.jsx` with a user list and create-user form.

@@ -1,34 +1,39 @@
-require('dotenv').config();
+require('dotenv').config({ path: require('path').join(__dirname, '../.env') });
 
-const http = require('http');
 const express = require('express');
+const http = require('http');
 const cors = require('cors');
-const { Server: SocketServer } = require('socket.io');
+const { Server: SocketIOServer } = require('socket.io');
+const db = require('./db/db');
 const authRoutes = require('./routes/auth');
-const conversationsRoutes = require('./routes/conversations');
-const messagesRoutes = require('./routes/messages');
+const conversationRoutes = require('./routes/conversations');
+const messageRoutes = require('./routes/messages');
+const adminRoutes = require('./routes/admin');
 const auth = require('./middleware/auth');
-const registerChatSocket = require('./sockets/chat');
+const ChatSockets = require('./sockets/chat');
 
-class AppServer {
+class Server {
   constructor() {
     this.app = express();
     this.port = process.env.PORT || 3001;
-    this.server = http.createServer(this.app);
-    this.io = new SocketServer(this.server, {
+    this.httpServer = http.createServer(this.app);
+    this.io = new SocketIOServer(this.httpServer, {
       cors: {
-        origin: 'http://localhost:5174',
+        origin: /^https?:\/\/localhost(:\d+)?$/,
         credentials: true,
       },
     });
 
     this.registerMiddleware();
     this.registerRoutes();
-    registerChatSocket(this.io);
+    this.chatSockets = new ChatSockets(this.io);
   }
 
   registerMiddleware() {
-    this.app.use(cors({ origin: 'http://localhost:5174', credentials: true }));
+    this.app.use(cors({
+      origin: /^https?:\/\/localhost(:\d+)?$/,
+      credentials: true
+    }));
     this.app.use(express.json());
   }
 
@@ -38,8 +43,10 @@ class AppServer {
     });
 
     this.app.use('/api/auth', authRoutes);
-    this.app.use('/api/conversations', conversationsRoutes);
-    this.app.use('/api/conversations', messagesRoutes);
+    this.app.use('/api/conversations', messageRoutes);
+    this.app.use('/api/conversations', conversationRoutes);
+    this.app.use('/api/groups', conversationRoutes.groupRouter);
+    this.app.use('/api/admin', adminRoutes);
 
     this.app.get('/api/me', auth.authenticate, (req, res) => {
       res.json({ user: req.user });
@@ -47,13 +54,13 @@ class AppServer {
   }
 
   start() {
-    this.server.listen(this.port, () => {
+    this.httpServer.listen(this.port, () => {
       console.log(`Mashariq WebChat server running on http://localhost:${this.port}`);
     });
   }
 }
 
-const server = new AppServer();
+const server = new Server();
 server.start();
 
 module.exports = server.app;

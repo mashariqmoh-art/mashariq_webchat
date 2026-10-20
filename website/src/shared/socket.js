@@ -1,33 +1,45 @@
 import { io } from 'socket.io-client';
+import api from './api';
 
-const socket = io('http://localhost:3001', {
-  autoConnect: false,
-  transports: ['websocket'],
-  auth: {
-    token: localStorage.getItem('token') || '',
-  },
-});
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
-export function getSocket() {
-  return socket;
-}
-
-export function connectSocket() {
-  const token = localStorage.getItem('token') || '';
-  socket.auth = { token };
-
-  if (!socket.connected) {
-    socket.connect();
+class SocketClient {
+  constructor() {
+    this.socket = null;
   }
 
-  return socket;
-}
-
-export function disconnectSocket() {
-  if (socket.connected) {
-    socket.disconnect();
+  connect() {
+    if (!this.socket) {
+      this.socket = io(SOCKET_URL, {
+        auth: { token: api.getToken() },
+      });
+    }
+    return this.socket;
   }
-  return socket;
+
+  disconnect() {
+    if (this.socket) {
+      this.socket.disconnect();
+      this.socket = null;
+    }
+  }
+
+  isConnected() {
+    return !!(this.socket && this.socket.connected);
+  }
+
+  on(event, handler) {
+    this.connect().on(event, handler);
+  }
+
+  off(event, handler) {
+    if (this.socket) this.socket.off(event, handler);
+  }
+
+  emit(event, payload, ack) {
+    this.connect().emit(event, payload, ack);
+  }
 }
 
-export default socket;
+const socketClient = new SocketClient();
+export default socketClient;

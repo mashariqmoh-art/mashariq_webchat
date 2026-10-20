@@ -1,7 +1,7 @@
 # Task 4.4 — Add the Socket.IO client
 
 **Section:** 4. Real-Time Messaging Slice
-**Status:** ⬜ Not started
+**Status:** ✅ Completed
 
 ## WHAT
 Create `website/src/shared/socket.js` that connects with the JWT in `auth`.

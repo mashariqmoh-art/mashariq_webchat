@@ -2,89 +2,87 @@ const jwt = require('jsonwebtoken');
 const conversations = require('../db/conversations');
 const messages = require('../db/messages');
 
-const jwtSecret = process.env.JWT_SECRET || 'mashariq-dev-secret';
+class ChatSockets {
+  constructor(io) {
+    this.io = io;
+    this.jwtSecret = process.env.JWT_SECRET;
 
-module.exports = function registerChatSocket(io) {
-  io.use((socket, next) => {
-    const rawToken = socket.handshake.auth?.token || socket.handshake.headers?.authorization || '';
-    const token = rawToken.startsWith('Bearer ') ? rawToken.replace('Bearer ', '') : rawToken;
+    this.io.use(this.authenticate.bind(this));
+    this.io.on('connection', this.onConnection.bind(this));
+  }
 
-    if (!token) {
-      return next(new Error('Missing auth token'));
-    }
+  authenticate(socket, next) {
+    const token = socket.handshake.auth && socket.handshake.auth.token;
 
     try {
-      socket.user = jwt.verify(token, jwtSecret);
-      return next();
-    } catch (error) {
-      return next(new Error('Unauthorized'));
+      socket.user = jwt.verify(token, this.jwtSecret);
+      next();
+    } catch (err) {
+      next(new Error('Invalid or expired token'));
     }
-  });
+  }
 
-  io.on('connection', (socket) => {
-    socket.on('join', (conversationSID) => {
-      const conversationId = Number(conversationSID);
-      const conversation = conversations.getConversationBySID(conversationId);
+  roomName(conversationSID) {
+    return `conv_${conversationSID}`;
+  }
 
-      if (!conversation) {
-        socket.emit('error', 'Conversation not found');
-        return;
-      }
+  onConnection(socket) {
+    socket.on('join', (payload, ack) => this.onJoin(socket, payload, ack));
+    socket.on('message', (payload, ack) => this.onMessage(socket, payload, ack));
+    socket.on('typing', (payload) => this.onTyping(socket, payload));
+  }
 
-      const isMember = conversation.members.some((member) => Number(member.user_SID) === Number(socket.user.userSID));
-      if (!isMember) {
-        socket.emit('error', 'You do not belong to this conversation');
-        return;
-      }
+  onJoin(socket, payload, ack) {
+    const conversationSID = Number(payload && payload.conversationSID);
 
-      const roomName = `conv_${conversationId}`;
-      socket.join(roomName);
-      socket.data.conversationSID = conversationId;
+    if (!conversations.isMember(conversationSID, socket.user.userSID)) {
+      if (ack) ack({ error: 'You are not a member of this conversation' });
+      return;
+    }
+
+    for (const room of socket.rooms) {
+      if (room !== socket.id) socket.leave(room);
+    }
+    socket.join(this.roomName(conversationSID));
+    if (ack) ack({ ok: true });
+  }
+
+  onMessage(socket, payload, ack) {
+    const conversationSID = Number(payload && payload.conversationSID);
+    const content = ((payload && payload.content) || '').trim();
+
+    if (!content) {
+      if (ack) ack({ error: 'content is required' });
+      return;
+    }
+
+    if (!conversations.isMember(conversationSID, socket.user.userSID)) {
+      if (ack) ack({ error: 'You are not a member of this conversation' });
+      return;
+    }
+
+    const message = messages.createMessage({
+      conversationSID,
+      senderSID: socket.user.userSID,
+      content,
     });
+    if (payload.clientTag) message.clientTag = payload.clientTag;
 
-    socket.on('message', (payload) => {
-      const rawConversationSID = payload?.conversationSID ?? payload?.conversation_SID ?? payload?.conversationId;
-      const rawContent = payload?.content ?? payload?.message ?? '';
-      const conversationSID = Number(rawConversationSID);
-      const content = String(rawContent || '').trim();
+    this.io.to(this.roomName(conversationSID)).emit('message', message);
+    if (ack) ack({ ok: true, message });
+  }
 
-      if (!conversationSID || !content) {
-        socket.emit('error', 'Conversation and content are required');
-        return;
-      }
+  onTyping(socket, payload) {
+    const conversationSID = Number(payload && payload.conversationSID);
 
-      const conversation = conversations.getConversationBySID(conversationSID);
-      if (!conversation) {
-        socket.emit('error', 'Conversation not found');
-        return;
-      }
+    if (!conversations.isMember(conversationSID, socket.user.userSID)) return;
 
-      const isMember = conversation.members.some((member) => Number(member.user_SID) === Number(socket.user.userSID));
-      if (!isMember) {
-        socket.emit('error', 'You do not belong to this conversation');
-        return;
-      }
-
-      try {
-        const createdMessage = messages.createMessage({
-          conversationSID,
-          senderSID: socket.user.userSID,
-          content,
-        });
-
-        io.to(`conv_${conversationSID}`).emit('message', createdMessage);
-      } catch (error) {
-        socket.emit('error', error.message || 'Unable to save message');
-      }
+    socket.to(this.roomName(conversationSID)).emit('typing', {
+      conversationSID,
+      userSID: socket.user.userSID,
+      nickName: socket.user.nickName,
     });
+  }
+}
 
-    socket.on('typing', (conversationSID) => {
-      const roomName = `conv_${Number(conversationSID)}`;
-      socket.to(roomName).emit('typing', {
-        userSID: socket.user.userSID,
-        nickName: socket.user.nickName || socket.user.name || 'User',
-        conversationSID: Number(conversationSID),
-      });
-    });
-  });
-};
+module.exports = ChatSockets;

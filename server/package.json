@@ -1,11 +1,15 @@
 {
   "name": "mashariq-webchat-server",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Mashariq WebChat backend — Express + Socket.IO + SQLite",
   "main": "src/index.js",
   "scripts": {
     "dev": "nodemon src/index.js",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "token": "node src/scripts/generate_token.js",
+    "seed": "node src/scripts/seed_users.js",
+    "seed:admin": "node src/scripts/seed_admin.js",
+    "chat:debug": "node src/scripts/debug_chat.js"
   },
   "keywords": [],
   "author": "",
@@ -21,7 +25,8 @@
     "socket.io": "^4.8.3"
   },
   "devDependencies": {
-    "nodemon": "^3.1.14"
+    "nodemon": "^3.1.14",
+    "socket.io-client": "^4.8.4"
   },
   "allowScripts": {
     "better-sqlite3@13.0.3": true

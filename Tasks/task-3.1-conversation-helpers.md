@@ -1,7 +1,7 @@
 # Task 3.1 — Add conversation DB helpers
 
 **Section:** 3. Conversations Slice
-**Status:** ⬜ Not started
+**Status:** ✅ Completed
 
 ## WHAT
 Create `server/src/db/conversations.js` with functions to create a 1:1 conversation, add members, list a user's conversations, and find one by SID.

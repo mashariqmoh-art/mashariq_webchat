@@ -1,58 +1,65 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
-function buildUrl(url) {
-  if (!url) {
-    return API_BASE_URL;
+class ApiClient {
+  constructor() {
+    this.baseUrl = API_URL;
+    this.captureTokenFromUrl();
   }
 
-  if (url.startsWith('http://') || url.startsWith('https://')) {
-    return url;
+  captureTokenFromUrl() {
+    let token = new URLSearchParams(window.location.search).get('token');
+
+    if (!token) {
+      const match = window.location.pathname.match(/\/token=([A-Za-z0-9._-]+)/);
+      if (match) token = match[1];
+    }
+
+    if (token) {
+      localStorage.setItem('token', token);
+      window.history.replaceState({}, '', '/');
+    }
   }
 
-  return `${API_BASE_URL}${url.startsWith('/') ? url : `/${url}`}`;
+  getToken() {
+    return localStorage.getItem('token');
+  }
+
+  getCurrentUser() {
+    const token = this.getToken();
+    if (!token) return null;
+
+    try {
+      return JSON.parse(atob(token.split('.')[1]));
+    } catch (err) {
+      return null;
+    }
+  }
+
+  async request(path, options = {}) {
+    const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
+    const token = this.getToken();
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    const response = await fetch(`${this.baseUrl}${path}`, { ...options, headers });
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      throw new Error((data && data.error) || `Request failed with status ${response.status}`);
+    }
+
+    return data;
+  }
+
+  get(path) {
+    return this.request(path);
+  }
+
+  post(path, body) {
+    return this.request(path, { method: 'POST', body: JSON.stringify(body) });
+  }
 }
 
-async function request(url, method = 'GET', body = null) {
-  const headers = { Accept: 'application/json' };
-  const token = localStorage.getItem('token');
-
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
-
-  if (body !== null) {
-    headers['Content-Type'] = 'application/json';
-  }
-
-  const response = await fetch(buildUrl(url), {
-    method,
-    headers,
-    body: body === null ? undefined : JSON.stringify(body),
-  });
-
-  const payload = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    throw new Error(payload.error || 'Request failed');
-  }
-
-  return payload;
-}
-
-export default {
-  get(url) {
-    return request(url, 'GET');
-  },
-
-  post(url, body) {
-    return request(url, 'POST', body);
-  },
-
-  put(url, body) {
-    return request(url, 'PUT', body);
-  },
-
-  del(url) {
-    return request(url, 'DELETE');
-  },
-};
+const api = new ApiClient();
+export default api;

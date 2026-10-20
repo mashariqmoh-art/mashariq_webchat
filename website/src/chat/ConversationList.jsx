@@ -1,48 +1,43 @@
 import React from 'react';
 
-export default class ConversationList extends React.Component {
-  renderConversationItem(conversation) {
-    const isSelected = conversation.SID === this.props.selectedConversationId;
-    const memberNames = (conversation.members || [])
-      .map((member) => member.nickName || member.name)
-      .filter(Boolean)
-      .join(', ');
+class ConversationList extends React.Component {
+  constructor(props) {
+    super(props);
+  }
 
-    return (
-      <button
-        type="button"
-        key={conversation.SID}
-        className={`list-group-item list-group-item-action border-0 ${isSelected ? 'active' : ''}`}
-        onClick={() => this.props.onSelectConversation(conversation)}
-      >
-        <div className="d-flex justify-content-between align-items-center">
-          <strong>
-            {conversation.name || 'Direct message'}
-          </strong>
-          <small className="text-muted">#{conversation.SID}</small>
-        </div>
-        <small className="text-muted d-block">{memberNames || 'No members'}</small>
-      </button>
-    );
+  displayName(conversation) {
+    if (conversation.isGroup) {
+      return conversation.name || 'Group';
+    }
+    return conversation.otherUserNickName || 'Unknown';
   }
 
   render() {
-    const { conversations } = this.props;
+    const { conversations, selectedSID, onSelect } = this.props;
 
     return (
-      <div className="border-end bg-light h-100 overflow-auto">
-        <div className="p-3 border-bottom bg-white">
-          <h2 className="h5 mb-0">Conversations</h2>
-        </div>
-
-        <div className="list-group list-group-flush">
-          {conversations.length === 0 ? (
-            <div className="p-3 text-muted">No conversations yet.</div>
-          ) : (
-            conversations.map((conversation) => this.renderConversationItem(conversation))
-          )}
-        </div>
+      <div className="list-group list-group-flush">
+        {conversations.length === 0 && (
+          <div className="p-3 text-muted">No conversations yet</div>
+        )}
+        {conversations.map((conversation) => (
+          <button
+            key={conversation.SID}
+            type="button"
+            className={`list-group-item list-group-item-action ${conversation.SID === selectedSID ? 'active' : ''}`}
+            onClick={() => onSelect(conversation.SID)}
+          >
+            <span className="d-flex justify-content-between align-items-center">
+              <span className="text-truncate">{this.displayName(conversation)}</span>
+              {conversation.isGroup ? (
+                <span className="badge text-bg-secondary ms-2">Group</span>
+              ) : null}
+            </span>
+          </button>
+        ))}
       </div>
     );
   }
 }
+
+export default ConversationList;

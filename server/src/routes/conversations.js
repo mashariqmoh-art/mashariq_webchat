@@ -1,61 +1,94 @@
 const express = require('express');
 const auth = require('../middleware/auth');
 const conversations = require('../db/conversations');
+const users = require('../db/user');
 
-class ConversationsRoutes {
+class ConversationRoutes {
   constructor() {
     this.router = express.Router();
-
     this.router.use(auth.authenticate);
+
     this.router.get('/', this.list.bind(this));
     this.router.post('/', this.create.bind(this));
-    this.router.get('/:sid', this.getBySID.bind(this));
+    this.router.get('/:sid', this.getOne.bind(this));
+
+    this.groupRouter = express.Router();
+    this.groupRouter.use(auth.authenticate);
+    this.groupRouter.post('/', this.createGroup.bind(this));
   }
 
   list(req, res) {
-    const userSID = req.user.userSID;
-    const allConversations = conversations.getConversationsForUser(userSID);
-    res.json({ conversations: allConversations });
+    res.json({ conversations: conversations.getConversationsForUser(req.user.userSID) });
   }
 
   create(req, res) {
     const { otherUserSID } = req.body || {};
-    const userSID = req.user.userSID;
 
     if (!otherUserSID) {
       return res.status(400).json({ error: 'otherUserSID is required' });
     }
 
-    try {
-      const conversation = conversations.createConversation({
-        creatorSID: userSID,
-        otherUserSID: Number(otherUserSID),
-      });
-
-      return res.status(201).json({ conversation });
-    } catch (error) {
-      if (error.message.includes('cannot start a conversation with yourself')) {
-        return res.status(400).json({ error: error.message });
-      }
-      return res.status(500).json({ error: 'Unable to create conversation' });
+    if (Number(otherUserSID) === req.user.userSID) {
+      return res.status(400).json({ error: 'Cannot start a conversation with yourself' });
     }
+
+    if (!users.findUserBySID(otherUserSID)) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const existing = conversations.findDirectConversation(req.user.userSID, otherUserSID);
+    if (existing) {
+      return res.json({ conversationSID: existing.SID, existing: true });
+    }
+
+    const conversation = conversations.createConversation({
+      creatorSID: req.user.userSID,
+      otherUserSID: Number(otherUserSID),
+    });
+    res.status(201).json({ conversationSID: conversation.SID });
   }
 
-  getBySID(req, res) {
-    const conversationSID = Number(req.params.sid);
-    const conversation = conversations.getConversationBySID(conversationSID);
+  createGroup(req, res) {
+    const { name, memberSIDs } = req.body || {};
+
+    if (!name || !name.trim()) {
+      return res.status(400).json({ error: 'name is required' });
+    }
+
+    if (!Array.isArray(memberSIDs)) {
+      return res.status(400).json({ error: 'memberSIDs must be an array' });
+    }
+
+    for (const memberSID of memberSIDs) {
+      if (!users.findUserBySID(memberSID)) {
+        return res.status(404).json({ error: `User not found: ${memberSID}` });
+      }
+    }
+
+    const conversation = conversations.createGroup({
+      creatorSID: req.user.userSID,
+      name: name.trim(),
+      memberSIDs: memberSIDs.map(Number),
+    });
+    res.status(201).json({ conversationSID: conversation.SID });
+  }
+
+  getOne(req, res) {
+    const sid = Number(req.params.sid);
+    const conversation = conversations.getConversationBySID(sid);
 
     if (!conversation) {
       return res.status(404).json({ error: 'Conversation not found' });
     }
 
-    const isMember = conversation.members.some((member) => member.user_SID === req.user.userSID);
-    if (!isMember) {
-      return res.status(403).json({ error: 'You do not belong to this conversation' });
+    if (!conversations.isMember(sid, req.user.userSID)) {
+      return res.status(403).json({ error: 'You are not a member of this conversation' });
     }
 
-    return res.json({ conversation });
+    res.json({ conversation });
   }
 }
 
-module.exports = new ConversationsRoutes().router;
+const conversationRoutes = new ConversationRoutes();
+module.exports = conversationRoutes.router;
+module.exports.groupRouter = conversationRoutes.groupRouter;

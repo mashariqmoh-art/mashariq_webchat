@@ -1,158 +1,113 @@
 import React from 'react';
-import api from '../shared/api.js';
-import socket from '../shared/socket.js';
+import api from '../shared/api';
+import socketClient from '../shared/socket';
 
-export default class MessageList extends React.Component {
+class MessageList extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {
       messages: [],
-      loading: true,
-      error: '',
-      typingUser: null,
+      typingNickName: null,
+      error: null,
     };
-
-    this.handleIncomingMessage = this.handleIncomingMessage.bind(this);
-    this.handleTyping = this.handleTyping.bind(this);
+    this.containerRef = React.createRef();
+    this.typingTimer = null;
+    this.currentUser = api.getCurrentUser();
   }
 
   componentDidMount() {
+    socketClient.on('message', this.handleMessage);
+    socketClient.on('typing', this.handleTyping);
+    socketClient.emit('join', { conversationSID: this.props.conversationSID });
     this.loadMessages();
-    this.attachSocket();
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.conversation?.SID !== this.props.conversation?.SID) {
-      this.loadMessages();
-      this.attachSocket();
-    }
+  componentDidUpdate() {
+    this.scrollToBottom();
   }
 
   componentWillUnmount() {
-    socket.off('message', this.handleIncomingMessage);
-    socket.off('typing', this.handleTyping);
-  }
-
-  attachSocket() {
-    const { conversation } = this.props;
-
-    socket.off('message', this.handleIncomingMessage);
-    socket.off('typing', this.handleTyping);
-    socket.on('message', this.handleIncomingMessage);
-    socket.on('typing', this.handleTyping);
-
-    if (conversation && conversation.SID) {
-      socket.emit('join', Number(conversation.SID));
-    }
+    socketClient.off('message', this.handleMessage);
+    socketClient.off('typing', this.handleTyping);
+    clearTimeout(this.typingTimer);
   }
 
   async loadMessages() {
-    const { conversation } = this.props;
-
-    if (!conversation) {
-      this.setState({ messages: [], loading: false, error: '' });
-      return;
-    }
-
     try {
-      const response = await api.get(`/conversations/${conversation.SID}/messages`);
-      this.setState({
-        messages: response.messages || [],
-        loading: false,
-        error: '',
-      });
-    } catch (error) {
-      this.setState({
-        loading: false,
-        error: error.message,
-      });
+      const data = await api.get(`/api/conversations/${this.props.conversationSID}/messages`);
+      this.setState({ messages: data.messages, error: null });
+    } catch (err) {
+      this.setState({ error: err.message });
     }
   }
 
-  handleIncomingMessage(payload) {
-    const message = payload && payload.message ? payload.message : payload;
-    const currentConversationSID = Number(this.props.conversation?.SID);
-    const messageConversationSID = Number(message?.conversation_SID ?? message?.conversationSID ?? 0);
+  handleMessage = (message) => {
+    if (message.conversation_SID !== this.props.conversationSID) return;
 
-    if (!message || !messageConversationSID || messageConversationSID !== currentConversationSID) {
-      return;
-    }
+    this.setState((state) => ({
+      messages: [
+        ...state.messages.filter(
+          (m) => m.SID !== message.SID && m.SID !== `tmp-${message.clientTag}`
+        ),
+        message,
+      ],
+    }));
+  };
 
-    this.setState((previousState) => {
-      const alreadyExists = previousState.messages.some((item) => Number(item.SID) === Number(message.SID));
-      if (alreadyExists) {
-        return previousState;
-      }
+  handleTyping = (data) => {
+    if (data.conversationSID !== this.props.conversationSID) return;
+    if (this.currentUser && data.userSID === this.currentUser.userSID) return;
 
-      return {
-        ...previousState,
-        messages: [...previousState.messages, message],
-      };
-    });
+    this.setState({ typingNickName: data.nickName });
+    clearTimeout(this.typingTimer);
+    this.typingTimer = setTimeout(() => this.setState({ typingNickName: null }), 2000);
+  };
+
+  appendOptimistic(message) {
+    this.setState((state) => ({ messages: [...state.messages, message] }));
   }
 
-  handleTyping(payload) {
-    const { conversation } = this.props;
-    const currentConversationSID = Number(conversation?.SID);
-    const incomingConversationSID = Number(payload?.conversationSID ?? payload?.conversation_SID ?? 0);
+  scrollToBottom() {
+    const el = this.containerRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }
 
-    if (!payload || !incomingConversationSID || incomingConversationSID !== currentConversationSID) {
-      return;
-    }
-
-    const userName = payload.nickName || 'Someone';
-    this.setState({ typingUser: userName });
-
-    window.clearTimeout(this.typingTimer);
-    this.typingTimer = window.setTimeout(() => {
-      this.setState({ typingUser: null });
-    }, 1200);
+  isOwn(message) {
+    return this.currentUser && message.sender_SID === this.currentUser.userSID;
   }
 
   render() {
-    const { messages, loading, error, typingUser } = this.state;
-
-    if (loading) {
-      return (
-        <div className="flex-grow-1 p-3 d-flex align-items-center justify-content-center text-muted">
-          Loading messages...
-        </div>
-      );
-    }
-
-    if (error) {
-      return (
-        <div className="flex-grow-1 p-3 d-flex align-items-center justify-content-center text-danger">
-          {error}
-        </div>
-      );
-    }
+    const { messages, typingNickName, error } = this.state;
 
     return (
-      <div className="flex-grow-1 overflow-auto bg-light p-3">
-        {messages.length === 0 ? (
-          <div className="text-center text-muted mt-4">No messages yet. Start the conversation.</div>
-        ) : (
-          <div className="d-flex flex-column gap-3">
-            {messages.map((message) => (
-              <div key={message.SID || `msg-${Date.now()}-${Math.random()}`} className="bg-white border rounded p-3 shadow-sm">
-                <div className="d-flex justify-content-between align-items-center mb-1">
-                  <strong>{message.senderNickName || message.senderName || 'User'}</strong>
-                  <small className="text-muted">
-                    {message.createdAt ? new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
-                  </small>
-                </div>
-                <div>{message.content}</div>
-              </div>
-            ))}
-          </div>
+      <div className="flex-grow-1 overflow-auto p-3" ref={this.containerRef}>
+        {error && <div className="text-danger">{error}</div>}
+        {!error && messages.length === 0 && (
+          <div className="text-muted">No messages yet. Say hello!</div>
         )}
-
-        {typingUser ? (
-          <div className="mt-3 text-muted small">{typingUser} is typing...</div>
-        ) : null}
+        {messages.map((message) => (
+          <div
+            key={message.SID}
+            className={`d-flex mb-2 ${this.isOwn(message) ? 'justify-content-end' : ''}`}
+          >
+            <div
+              className={`px-3 py-2 rounded ${this.isOwn(message) ? 'bg-primary text-white' : 'bg-light'}`}
+              style={{ maxWidth: '70%' }}
+            >
+              {!this.isOwn(message) && (
+                <div className="small text-muted">{message.senderNickName}</div>
+              )}
+              <div>{message.content}</div>
+              {message.pending && <div className="small opacity-75">sending…</div>}
+            </div>
+          </div>
+        ))}
+        {typingNickName && (
+          <div className="text-muted small">{typingNickName} is typing…</div>
+        )}
       </div>
     );
   }
 }
+
+export default MessageList;

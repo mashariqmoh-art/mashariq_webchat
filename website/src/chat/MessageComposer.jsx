@@ -1,91 +1,75 @@
 import React from 'react';
-import socket from '../shared/socket.js';
+import api from '../shared/api';
+import socketClient from '../shared/socket';
 
-export default class MessageComposer extends React.Component {
+class MessageComposer extends React.Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      draft: '',
-      optimisticMessage: null,
-    };
-
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleTyping = this.handleTyping.bind(this);
+    this.state = { content: '' };
+    this.lastTypingSent = 0;
   }
 
-  handleTyping() {
-    const { conversation } = this.props;
+  handleChange = (event) => {
+    this.setState({ content: event.target.value });
 
-    if (conversation && conversation.SID) {
-      socket.emit('typing', Number(conversation.SID));
+    const now = Date.now();
+    if (now - this.lastTypingSent > 2000) {
+      this.lastTypingSent = now;
+      socketClient.emit('typing', { conversationSID: this.props.conversationSID });
     }
-  }
+  };
 
-  handleChange(event) {
-    const draft = event.target.value;
-    this.setState({ draft });
-
-    if (draft.trim()) {
-      this.handleTyping();
+  handleKeyDown = (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      this.send();
     }
-  }
+  };
 
-  handleSubmit(event) {
-    event.preventDefault();
+  send = () => {
+    const content = this.state.content.trim();
+    if (!content) return;
 
-    const { conversation } = this.props;
-    const content = this.state.draft.trim();
+    const clientTag = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    socketClient.emit('message', {
+      conversationSID: this.props.conversationSID,
+      content,
+      clientTag,
+    });
 
-    if (!conversation || !content) {
-      return;
-    }
-
-    const optimisticMessage = {
-      SID: `local-${Date.now()}`,
-      senderNickName: 'You',
+    const user = api.getCurrentUser();
+    this.props.onOptimistic({
+      SID: `tmp-${clientTag}`,
+      conversation_SID: this.props.conversationSID,
+      sender_SID: user && user.userSID,
+      senderNickName: user && user.nickName,
       content,
       createdAt: new Date().toISOString(),
-    };
-
-    this.setState({
-      draft: '',
-      optimisticMessage,
+      pending: true,
     });
 
-    socket.emit('message', {
-      conversationSID: Number(conversation.SID),
-      content,
-    });
-  }
+    this.setState({ content: '' });
+  };
 
   render() {
-    const { draft, optimisticMessage } = this.state;
-
     return (
-      <div className="border-top bg-white p-3">
-        {optimisticMessage ? (
-          <div className="alert alert-light border mb-3 py-2 px-3 mb-3">
-            <div className="fw-semibold small">You</div>
-            <div>{optimisticMessage.content}</div>
-          </div>
-        ) : null}
-
-        <form onSubmit={this.handleSubmit} className="d-flex gap-2">
+      <div className="border-top p-3">
+        <div className="input-group">
           <input
             type="text"
             className="form-control"
             placeholder="Type a message"
-            value={draft}
+            value={this.state.content}
             onChange={this.handleChange}
-            onKeyDown={this.handleTyping}
+            onKeyDown={this.handleKeyDown}
           />
-          <button type="submit" className="btn btn-primary" disabled={!draft.trim()}>
+          <button type="button" className="btn btn-primary" onClick={this.send}>
             Send
           </button>
-        </form>
+        </div>
       </div>
     );
   }
 }
+
+export default MessageComposer;

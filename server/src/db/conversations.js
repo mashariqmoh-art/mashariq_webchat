@@ -1,99 +1,41 @@
-const db = require('./db');
+const dbBuilder = require('./db_builder');
 
-class ConversationRepository {
-  createConversation({ creatorSID, otherUserSID }) {
-    if (!creatorSID || !otherUserSID) {
-      throw new Error('creatorSID and otherUserSID are required');
-    }
-
-    if (Number(creatorSID) === Number(otherUserSID)) {
-      throw new Error('You cannot start a conversation with yourself');
-    }
-
-    const existing = this.getExistingDirectConversation(creatorSID, otherUserSID);
-    if (existing) {
-      return this.getConversationBySID(existing.SID);
-    }
-
-    const result = db.prepare(`
-      INSERT INTO table_Conversation (name, isGroup, createdBy_SID)
-      VALUES (NULL, 0, ?)
-    `).run(creatorSID);
-
-    const conversationSID = result.lastInsertRowid;
-
-    db.prepare(`
-      INSERT INTO table_ConversationMember (conversation_SID, user_SID, isGroupAdmin)
-      VALUES (?, ?, 0)
-    `).run(conversationSID, creatorSID);
-
-    db.prepare(`
-      INSERT INTO table_ConversationMember (conversation_SID, user_SID, isGroupAdmin)
-      VALUES (?, ?, 0)
-    `).run(conversationSID, otherUserSID);
-
-    return this.getConversationBySID(conversationSID);
+class Conversation {
+  constructor() {
+    this.repo = dbBuilder.buildConversationRepository();
   }
 
-  getExistingDirectConversation(userSIDA, userSIDB) {
-    return db.prepare(`
-      SELECT c.SID
-      FROM table_Conversation c
-      WHERE c.isGroup = 0
-        AND EXISTS (
-          SELECT 1 FROM table_ConversationMember cm1
-          WHERE cm1.conversation_SID = c.SID AND cm1.user_SID = ?
-        )
-        AND EXISTS (
-          SELECT 1 FROM table_ConversationMember cm2
-          WHERE cm2.conversation_SID = c.SID AND cm2.user_SID = ?
-        )
-      LIMIT 1
-    `).get(userSIDA, userSIDB);
+  createConversation(data) {
+    return this.repo.createConversation(data);
   }
 
-  getConversationMembers(conversationSID) {
-    return db.prepare(`
-      SELECT cm.SID, cm.conversation_SID, cm.user_SID, cm.isGroupAdmin, cm.joinedAt,
-             u.name, u.nickName, u.email, u.mobileNo
-      FROM table_ConversationMember cm
-      JOIN table_User u ON u.SID = cm.user_SID
-      WHERE cm.conversation_SID = ?
-      ORDER BY cm.joinedAt ASC
-    `).all(conversationSID);
+  createGroup(data) {
+    return this.repo.createGroup(data);
+  }
+
+  addMember(conversationSID, userSID, isGroupAdmin) {
+    return this.repo.addMember(conversationSID, userSID, isGroupAdmin);
+  }
+
+  addMemberToConversation({ conversationSID, userSID }) {
+    return this.repo.addMember(conversationSID, userSID);
   }
 
   getConversationsForUser(userSID) {
-    const conversations = db.prepare(`
-      SELECT c.*
-      FROM table_ConversationMember cm
-      JOIN table_Conversation c ON c.SID = cm.conversation_SID
-      WHERE cm.user_SID = ?
-      ORDER BY c.createdAt DESC
-    `).all(userSID);
-
-    return conversations.map((conversation) => ({
-      ...conversation,
-      members: this.getConversationMembers(conversation.SID),
-    }));
+    return this.repo.getConversationsForUser(userSID);
   }
 
   getConversationBySID(sid) {
-    const conversation = db.prepare(`
-      SELECT *
-      FROM table_Conversation
-      WHERE SID = ?
-    `).get(sid);
+    return this.repo.getConversationBySID(sid);
+  }
 
-    if (!conversation) {
-      return null;
-    }
+  findDirectConversation(userSID, otherUserSID) {
+    return this.repo.findDirectConversation(userSID, otherUserSID);
+  }
 
-    return {
-      ...conversation,
-      members: this.getConversationMembers(conversation.SID),
-    };
+  isMember(conversationSID, userSID) {
+    return this.repo.isMember(conversationSID, userSID);
   }
 }
 
-module.exports = new ConversationRepository();
+module.exports = new Conversation();

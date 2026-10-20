@@ -1,7 +1,7 @@
 # Task 3.2 — Build conversation REST endpoints
 
 **Section:** 3. Conversations Slice
-**Status:** ⬜ Not started
+**Status:** ✅ Completed
 
 ## WHAT
 Add `server/src/routes/conversations.js` with protected endpoints.

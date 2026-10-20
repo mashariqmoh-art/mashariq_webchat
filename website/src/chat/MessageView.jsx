@@ -1,38 +1,54 @@
 import React from 'react';
-import MessageList from './MessageList.jsx';
-import MessageComposer from './MessageComposer.jsx';
+import MessageList from './MessageList';
+import MessageComposer from './MessageComposer';
 
-export default class MessageView extends React.Component {
+class MessageView extends React.Component {
+  constructor(props) {
+    super(props);
+    this.messageListRef = React.createRef();
+  }
+
+  handleOptimistic = (message) => {
+    if (this.messageListRef.current) {
+      this.messageListRef.current.appendOptimistic(message);
+    }
+  };
+
+  title(conversation) {
+    if (conversation.isGroup) {
+      return conversation.name || 'Group';
+    }
+    return conversation.otherUserNickName || 'Unknown';
+  }
+
   render() {
     const { conversation } = this.props;
 
     if (!conversation) {
       return (
-        <div className="d-flex align-items-center justify-content-center h-100 text-muted">
-          Select a conversation to view messages.
+        <div className="d-flex h-100 align-items-center justify-content-center text-muted">
+          Select a conversation to start chatting
         </div>
       );
     }
 
-    const memberNames = (conversation.members || [])
-      .map((member) => member.nickName || member.name)
-      .filter(Boolean)
-      .join(', ');
-
     return (
       <div className="d-flex flex-column h-100">
-        <div className="border-bottom p-3 bg-white">
-          <h3 className="h5 mb-0">
-            {conversation.name || 'Direct message'}
-          </h3>
-          <small className="text-muted">{memberNames || 'No members'}</small>
+        <div className="border-bottom p-3">
+          <h5 className="mb-0">{this.title(conversation)}</h5>
         </div>
-
-        <div className="flex-grow-1 overflow-hidden d-flex flex-column">
-          <MessageList conversation={conversation} />
-          <MessageComposer conversation={conversation} />
-        </div>
+        <MessageList
+          key={conversation.SID}
+          ref={this.messageListRef}
+          conversationSID={conversation.SID}
+        />
+        <MessageComposer
+          conversationSID={conversation.SID}
+          onOptimistic={this.handleOptimistic}
+        />
       </div>
     );
   }
 }
+
+export default MessageView;

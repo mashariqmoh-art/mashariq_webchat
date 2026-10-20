@@ -7,7 +7,31 @@ class UserOracleRepository {
     return null;
   }
 
+  findUserByNickName(nickName) {
+    return null;
+  }
+
   findUserBySID(sid) {
+    return null;
+  }
+
+  listUsers() {
+    return [];
+  }
+
+  userHasPermission(userSID, permissionName) {
+    return false;
+  }
+
+  assignRole(userSID, roleSID) {
+    return null;
+  }
+
+  listRoles() {
+    return [];
+  }
+
+  findRoleByName(name) {
     return null;
   }
 }
