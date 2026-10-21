@@ -5,7 +5,7 @@ const users = require('../db/user');
 
 class AuthRoutes {
   constructor() {
-    this.jwtSecret = process.env.JWT_SECRET;
+    this.jwtSecret = process.env.JWT_SECRET || 'mashariq-dev-secret';
     this.router = express.Router();
 
     this.router.post('/register', this.register.bind(this));
