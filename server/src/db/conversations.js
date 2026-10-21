@@ -17,8 +17,8 @@ class Conversation {
     return this.repo.addMember(conversationSID, userSID, isGroupAdmin);
   }
 
-  addMemberToConversation(data) {
-    return this.repo.addMemberToConversation(data);
+  addMemberToConversation({ conversationSID, userSID }) {
+    return this.repo.addMember(conversationSID, userSID);
   }
 
   getConversationsForUser(userSID) {

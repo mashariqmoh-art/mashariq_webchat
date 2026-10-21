@@ -47,10 +47,10 @@ Status legend: ✅ Completed · 🟡 Partial · ⬜ Not started
 ## 6. Minimal Admin Slice
 | Task | File | Status |
 |---|---|---|
-| 6.1 Add permission-check middleware | [task-6.1-permission-middleware.md](task-6.1-permission-middleware.md) | ⬜ |
-| 6.2 Seed the first admin user | [task-6.2-seed-admin.md](task-6.2-seed-admin.md) | ⬜ |
-| 6.3 Build minimal admin users endpoint | [task-6.3-admin-endpoints.md](task-6.3-admin-endpoints.md) | ⬜ |
-| 6.4 Build a minimal admin UI | [task-6.4-admin-ui.md](task-6.4-admin-ui.md) | ⬜ |
+| 6.1 Add permission-check middleware | [task-6.1-permission-middleware.md](task-6.1-permission-middleware.md) | ✅ |
+| 6.2 Seed the first admin user | [task-6.2-seed-admin.md](task-6.2-seed-admin.md) | ✅ |
+| 6.3 Build minimal admin users endpoint | [task-6.3-admin-endpoints.md](task-6.3-admin-endpoints.md) | ✅ |
+| 6.4 Build a minimal admin UI | [task-6.4-admin-ui.md](task-6.4-admin-ui.md) | ✅ |
 
 ## 7. Polish & Verification
 | Task | File | Status |

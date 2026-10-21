@@ -25,20 +25,10 @@ class ConversationList extends React.Component {
             onClick={() => onSelect(conversation.SID)}
             aria-current={conversation.SID === selectedSID ? 'page' : undefined}
           >
-            <span className={`chat-conversation-avatar ${conversation.isGroup ? 'group' : ''}`}>
-              {this.displayName(conversation).trim().charAt(0).toLocaleUpperCase()}
-            </span>
-            <span className="chat-conversation-copy">
-              <span className="chat-conversation-title">{this.displayName(conversation)}</span>
-              <span className="chat-conversation-subtitle">
-                {conversation.isGroup
-                  ? (language === 'ar' ? 'محادثة جماعية' : 'Group conversation')
-                  : (language === 'ar' ? 'محادثة مباشرة' : 'Direct conversation')}
-              </span>
-            </span>
-            <span className="chat-conversation-meta">
+            <span className="d-flex justify-content-between align-items-center">
+              <span className="text-truncate">{this.displayName(conversation)}</span>
               {conversation.isGroup ? (
-                <span className="chat-group-badge">{language === 'ar' ? 'مجموعة' : 'Group'}</span>
+                <span className="badge text-bg-secondary ms-2">Group</span>
               ) : null}
             </span>
           </button>

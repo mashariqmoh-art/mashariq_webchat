@@ -1,7 +1,7 @@
 # Task 6.1 — Add permission-check middleware
 
 **Section:** 6. Minimal Admin Slice
-**Status:** ⬜ Not started
+**Status:** ✅ Completed
 
 ## WHAT
 Create `server/src/middleware/requirePermission.js`.

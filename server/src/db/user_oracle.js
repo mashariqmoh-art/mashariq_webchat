@@ -15,8 +15,24 @@ class UserOracleRepository {
     return null;
   }
 
-  findAvailableUsers(excludeSID) {
+  listUsers() {
     return [];
+  }
+
+  userHasPermission(userSID, permissionName) {
+    return false;
+  }
+
+  assignRole(userSID, roleSID) {
+    return null;
+  }
+
+  listRoles() {
+    return [];
+  }
+
+  findRoleByName(name) {
+    return null;
   }
 }
 

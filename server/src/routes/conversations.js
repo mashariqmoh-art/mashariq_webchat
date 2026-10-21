@@ -55,35 +55,25 @@ class ConversationRoutes {
 
   createGroup(req, res) {
     const { name, memberSIDs } = req.body || {};
-    const groupName = typeof name === 'string' ? name.trim() : '';
 
-    if (!groupName) {
+    if (!name || !name.trim()) {
       return res.status(400).json({ error: 'name is required' });
     }
 
-    if (!Array.isArray(memberSIDs) || memberSIDs.some((sid) => {
-      const hasValidType = Number.isSafeInteger(sid)
-        || (typeof sid === 'string' && /^\d+$/.test(sid));
-      return !hasValidType || !Number.isSafeInteger(Number(sid)) || Number(sid) <= 0;
-    })) {
-      return res.status(400).json({ error: 'memberSIDs must be an array of valid user SIDs' });
+    if (!Array.isArray(memberSIDs)) {
+      return res.status(400).json({ error: 'memberSIDs must be an array' });
     }
 
-    const memberIDs = [...new Set(memberSIDs.map(Number))]
-      .filter((sid) => sid !== req.user.userSID);
-
-    if (memberIDs.length === 0) {
-      return res.status(400).json({ error: 'At least one other member is required' });
-    }
-
-    if (memberIDs.some((sid) => !users.findUserBySID(sid))) {
-      return res.status(404).json({ error: 'One or more users were not found' });
+    for (const memberSID of memberSIDs) {
+      if (!users.findUserBySID(memberSID)) {
+        return res.status(404).json({ error: `User not found: ${memberSID}` });
+      }
     }
 
     const conversation = conversations.createGroup({
       creatorSID: req.user.userSID,
-      name: groupName,
-      memberSIDs: memberIDs,
+      name: name.trim(),
+      memberSIDs: memberSIDs.map(Number),
     });
     res.status(201).json({ conversationSID: conversation.SID });
   }
