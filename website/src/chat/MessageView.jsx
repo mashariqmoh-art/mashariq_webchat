@@ -16,35 +16,65 @@ class MessageView extends React.Component {
 
   title(conversation) {
     if (conversation.isGroup) {
-      return conversation.name || 'Group';
+      return conversation.name || (this.props.language === 'ar' ? 'مجموعة' : 'Group');
     }
-    return conversation.otherUserNickName || 'Unknown';
+    return conversation.otherUserNickName || (this.props.language === 'ar' ? 'مستخدم' : 'Unknown');
   }
 
   render() {
-    const { conversation } = this.props;
+    const { conversation, language, onBack } = this.props;
+    const isArabic = language === 'ar';
 
     if (!conversation) {
       return (
-        <div className="d-flex h-100 align-items-center justify-content-center text-muted">
-          Select a conversation to start chatting
+        <div className="chat-empty">
+          <img className="chat-empty-logo" src="/mashariq-logo.png" alt="Mashariq" />
+          <span className="chat-empty-spark" aria-hidden="true">✳</span>
+          <h2>{isArabic ? 'كل تواصل يبدأ بتحية' : 'Every connection starts with hello'}</h2>
+          <p>
+            {isArabic
+              ? 'اختر محادثة من القائمة لتبدأ التواصل.'
+              : 'Choose a conversation from your list to start chatting.'}
+          </p>
         </div>
       );
     }
 
+    const title = this.title(conversation);
+    const initial = title.trim().charAt(0).toLocaleUpperCase();
+
     return (
-      <div className="d-flex flex-column h-100">
-        <div className="border-bottom p-3">
-          <h5 className="mb-0">{this.title(conversation)}</h5>
-        </div>
+      <div className="chat-message-view">
+        <header className="chat-message-header">
+          <button
+            aria-label={isArabic ? 'العودة إلى المحادثات' : 'Back to conversations'}
+            className="chat-back-button"
+            onClick={onBack}
+            type="button"
+          >
+            {isArabic ? '→' : '←'}
+          </button>
+          <span className={`chat-header-avatar ${conversation.isGroup ? 'group' : ''}`}>{initial}</span>
+          <span className="chat-header-copy">
+            <strong>{title}</strong>
+            <small>
+              {conversation.isGroup
+                ? (isArabic ? 'محادثة جماعية' : 'Group conversation')
+                : (isArabic ? 'محادثة مباشرة' : 'Direct conversation')}
+            </small>
+          </span>
+          <span className="chat-header-mark" aria-hidden="true">✳</span>
+        </header>
         <MessageList
           key={conversation.SID}
           ref={this.messageListRef}
           conversationSID={conversation.SID}
+          language={language}
         />
         <MessageComposer
           conversationSID={conversation.SID}
           onOptimistic={this.handleOptimistic}
+          language={language}
         />
       </div>
     );

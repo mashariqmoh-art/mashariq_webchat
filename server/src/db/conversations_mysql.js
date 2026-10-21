@@ -46,6 +46,10 @@ class ConversationRepository {
     `).run(conversationSID, userSID, isGroupAdmin).lastInsertRowid;
   }
 
+  addMemberToConversation({ conversationSID, userSID }) {
+    return this.addMember(conversationSID, userSID);
+  }
+
   getConversationsForUser(userSID) {
     return db.prepare(`
       SELECT c.SID, c.name, c.isGroup, c.createdBy_SID, c.createdAt,

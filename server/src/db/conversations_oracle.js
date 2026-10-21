@@ -11,6 +11,10 @@ class ConversationOracleRepository {
     return null;
   }
 
+  addMemberToConversation({ conversationSID, userSID }) {
+    return this.addMember(conversationSID, userSID);
+  }
+
   getConversationsForUser(userSID) {
     return [];
   }
