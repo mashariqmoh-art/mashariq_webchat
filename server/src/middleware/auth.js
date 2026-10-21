@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 class AuthMiddleware {
   constructor() {
-    this.jwtSecret = process.env.JWT_SECRET;
+    this.jwtSecret = process.env.JWT_SECRET || 'mashariq-dev-secret';
     this.authenticate = this.authenticate.bind(this);
   }
 
