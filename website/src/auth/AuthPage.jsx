@@ -2,358 +2,240 @@ import React from 'react';
 import api from '../shared/api';
 import './AuthPage.css';
 
-const initialForm = {
-  name: '',
-  nickName: '',
-  mobileNo: '',
-  email: '',
-  password: '',
-  confirmPassword: '',
-};
-
-const translations = {
-  en: {
-    language: 'العربية',
-    themeToDark: 'Switch to dark mode',
-    themeToLight: 'Switch to light mode',
-    connected: 'CONNECTED WITH PURPOSE',
-    brandHeading: <>Conversations that<br />bring us closer.</>,
-    brandDescription: 'A thoughtful space for your community to connect, share, and stay in touch.',
-    brandFooter: 'Inspired by a tradition of care and connection',
-    join: 'JOIN THE COMMUNITY',
-    welcome: 'WELCOME BACK',
-    registerTitle: 'Create your account',
-    loginTitle: 'Sign in to WebChat',
-    registerDescription: 'A few details and you’ll be ready to connect.',
-    loginDescription: 'Your conversations are waiting for you.',
-    accountAccess: 'Account access',
-    signIn: 'Sign in',
-    createAccount: 'Create account',
-    fullName: 'Full name',
-    fullNamePlaceholder: 'Your full name',
-    displayName: 'Display name',
-    displayNamePlaceholder: 'How you’ll appear',
-    mobile: 'Mobile number',
-    mobilePlaceholder: '+966 5X XXX XXXX',
-    email: 'Email address',
-    emailPlaceholder: 'you@example.com',
-    password: 'Password',
-    newPasswordPlaceholder: 'At least 8 characters',
-    currentPasswordPlaceholder: 'Enter your password',
-    confirmPassword: 'Confirm password',
-    confirmPasswordPlaceholder: 'Enter your password again',
-    showPassword: 'Show password',
-    hidePassword: 'Hide password',
-    show: 'Show',
-    hide: 'Hide',
-    passwordMismatch: 'Your passwords do not match.',
-    pleaseWait: 'Please wait…',
-    createAccountAction: 'Create your account',
-    terms: 'By continuing, you agree to use WebChat respectfully and responsibly.',
-  },
-  ar: {
-    language: 'English',
-    themeToDark: 'التبديل إلى الوضع الداكن',
-    themeToLight: 'التبديل إلى الوضع الفاتح',
-    connected: 'تواصل يجمعنا',
-    brandHeading: <>محادثات<br />تقرّبنا من بعضنا.</>,
-    brandDescription: 'مساحة تجمع مجتمعك للتواصل ومشاركة اللحظات والبقاء على اتصال.',
-    brandFooter: 'مستوحى من قيم التواصل والاهتمام',
-    join: 'انضم إلى مجتمعنا',
-    welcome: 'مرحباً بعودتك',
-    registerTitle: 'أنشئ حسابك',
-    loginTitle: 'سجّل الدخول إلى ويب شات',
-    registerDescription: 'أدخل بعض التفاصيل وابدأ بالتواصل.',
-    loginDescription: 'محادثاتك بانتظارك.',
-    accountAccess: 'خيارات الحساب',
-    signIn: 'تسجيل الدخول',
-    createAccount: 'إنشاء حساب',
-    fullName: 'الاسم الكامل',
-    fullNamePlaceholder: 'أدخل اسمك الكامل',
-    displayName: 'الاسم الظاهر',
-    displayNamePlaceholder: 'الاسم الذي سيظهر للآخرين',
-    mobile: 'رقم الجوال',
-    mobilePlaceholder: '+966 5X XXX XXXX',
-    email: 'البريد الإلكتروني',
-    emailPlaceholder: 'you@example.com',
-    password: 'كلمة المرور',
-    newPasswordPlaceholder: '8 أحرف على الأقل',
-    currentPasswordPlaceholder: 'أدخل كلمة المرور',
-    confirmPassword: 'تأكيد كلمة المرور',
-    confirmPasswordPlaceholder: 'أعد إدخال كلمة المرور',
-    showPassword: 'إظهار كلمة المرور',
-    hidePassword: 'إخفاء كلمة المرور',
-    show: 'إظهار',
-    hide: 'إخفاء',
-    passwordMismatch: 'كلمتا المرور غير متطابقتين.',
-    pleaseWait: 'يرجى الانتظار…',
-    createAccountAction: 'إنشاء حسابك',
-    terms: 'باستمرارك، فإنك توافق على استخدام ويب شات باحترام ومسؤولية.',
-  },
-};
-
 export default class AuthPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      mode: 'login',
-      form: { ...initialForm },
-      passwordVisible: false,
-      submitting: false,
+      mode: 'register',
+      name: '',
+      email: '',
+      nickName: '',
+      mobileNo: '',
+      password: '',
+      confirmPassword: '',
       error: '',
-      language: localStorage.getItem('auth-language') === 'ar' ? 'ar' : 'en',
-      theme: localStorage.getItem('auth-theme') === 'dark' ? 'dark' : 'light',
+      isSubmitting: false,
     };
   }
 
-  setLanguage = (language) => {
-    localStorage.setItem('auth-language', language);
-    this.setState({ language });
-  };
-
-  toggleTheme = () => {
-    const theme = this.state.theme === 'light' ? 'dark' : 'light';
-    localStorage.setItem('auth-theme', theme);
-    this.setState({ theme });
-  };
-
-  setMode = (mode) => {
-    this.setState({ mode, error: '' });
-  };
-
   handleChange = (event) => {
-    const { name, value } = event.target;
-    this.setState((state) => ({
-      form: { ...state.form, [name]: value },
+    this.setState({ [event.target.name]: event.target.value });
+  };
+
+  handleModeChange = (mode) => {
+    this.setState({
+      mode,
       error: '',
-    }));
+      password: '',
+      confirmPassword: '',
+    });
   };
 
   handleSubmit = async (event) => {
     event.preventDefault();
-    const { form, mode } = this.state;
+    const { mode, name, email, nickName, mobileNo, password, confirmPassword } = this.state;
 
-    if (mode === 'register' && form.password !== form.confirmPassword) {
-      this.setState({ error: translations[this.state.language].passwordMismatch });
+    if (mode === 'register' && password !== confirmPassword) {
+      this.setState({ error: 'Your passwords do not match.' });
       return;
     }
 
-    this.setState({ submitting: true, error: '' });
+    this.setState({ error: '', isSubmitting: true });
+    let accountCreated = false;
 
     try {
+      const normalizedEmail = email.trim();
+
       if (mode === 'register') {
         await api.post('/api/auth/register', {
-          name: form.name.trim(),
-          nickName: form.nickName.trim(),
-          mobileNo: form.mobileNo.trim(),
-          email: form.email.trim(),
-          password: form.password,
+          name: name.trim(),
+          email: normalizedEmail,
+          nickName: nickName.trim(),
+          mobileNo: mobileNo.trim(),
+          password,
         });
+        accountCreated = true;
       }
 
       const result = await api.post('/api/auth/login', {
-        email: form.email.trim(),
-        password: form.password,
+        email: normalizedEmail,
+        password,
       });
+
+      if (!result.token) {
+        throw new Error('Sign in succeeded, but no authentication token was returned.');
+      }
 
       localStorage.setItem('token', result.token);
       this.props.onAuthenticated();
     } catch (error) {
-      this.setState({ error: error.message });
+      this.setState({
+        mode: accountCreated ? 'login' : mode,
+        error: accountCreated
+          ? `Account created, but automatic sign-in failed: ${error.message}. Please sign in.`
+          : error.message,
+      });
     } finally {
-      this.setState({ submitting: false });
+      this.setState({ isSubmitting: false });
     }
   };
 
   render() {
-    const { mode, form, passwordVisible, submitting, error, language, theme } = this.state;
+    const { mode, name, email, nickName, mobileNo, password, confirmPassword, error, isSubmitting } = this.state;
     const isRegistering = mode === 'register';
-    const passwordType = passwordVisible ? 'text' : 'password';
-    const t = translations[language];
-    const isArabic = language === 'ar';
 
     return (
-      <main className="auth-page" data-theme={theme} dir={isArabic ? 'rtl' : 'ltr'} lang={language}>
-        <section className="auth-brand-panel" aria-label="Mashariq WebChat">
-          <div className="auth-brand-logo">
-            <img alt="Mashariq" className="auth-logo" src="/mashariq-logo.png" />
+      <main className="auth-page">
+        <section className="auth-card" aria-labelledby="auth-title">
+          <div className="auth-intro">
+            <div className="auth-brand">
+              <svg className="auth-brand-mark" viewBox="0 0 48 48" aria-hidden="true">
+                <g stroke="currentColor" strokeWidth="3.5" strokeLinecap="round">
+                  <path d="M24 3v9M24 36v9M3 24h9M36 24h9M9.2 9.2l6.4 6.4m16.8 16.8 6.4 6.4m0-29.6-6.4 6.4m-16.8 16.8-6.4 6.4" />
+                </g>
+                <circle cx="24" cy="24" r="5.5" fill="currentColor" />
+              </svg>
+              <span className="auth-brand-name">
+                <span lang="ar" dir="rtl">مشارق محادثات </span>
+                <span>MASHARIQ</span>
+              </span>
+            </div>
+            <div className="auth-intro-copy">
+              <span className="auth-eyebrow">Stay connected</span>
+              <h1>Bring your conversations closer.</h1>
+              <p>A welcoming space to keep up with the people who matter, every day.</p>
+            </div>
+            <div className="auth-orbit auth-orbit-one" aria-hidden="true" />
+            <div className="auth-orbit auth-orbit-two" aria-hidden="true" />
           </div>
-          <div className="auth-brand-copy">
-            <span className="auth-kicker">{t.connected}</span>
-            <h1>{t.brandHeading}</h1>
-            <p>{t.brandDescription}</p>
-          </div>
-          <div className="auth-brand-footer">
-            <span className="auth-brand-line" />
-            <span>{t.brandFooter}</span>
-          </div>
-          <span className="auth-orbit auth-orbit-one" aria-hidden="true" />
-          <span className="auth-orbit auth-orbit-two" aria-hidden="true" />
-        </section>
 
-        <section className="auth-form-panel">
-          <div className="auth-form-wrap">
-            <div className="auth-preferences" aria-label={isArabic ? 'تفضيلات العرض' : 'Display preferences'}>
-              <button
-                className="auth-preference-button"
-                onClick={() => this.setLanguage(isArabic ? 'en' : 'ar')}
-                type="button"
-              >
-                {t.language}
-              </button>
-              <button
-                aria-label={theme === 'light' ? t.themeToDark : t.themeToLight}
-                className="auth-preference-button"
-                onClick={this.toggleTheme}
-                type="button"
-              >
-                <span aria-hidden="true">{theme === 'light' ? '☾' : '☀'}</span>
-                {theme === 'light'
-                  ? (isArabic ? 'الوضع الداكن' : 'Dark mode')
-                  : (isArabic ? 'الوضع الفاتح' : 'Light mode')}
-              </button>
-            </div>
-            <div className="auth-mobile-brand">
-              <img alt="Mashariq" className="auth-logo" src="/mashariq-logo.png" />
-            </div>
-            <div className="auth-heading">
-              <span className="auth-eyebrow">{isRegistering ? t.join : t.welcome}</span>
-              <h2>{isRegistering ? t.registerTitle : t.loginTitle}</h2>
+          <div className="auth-form-panel">
+            <div className="auth-form-heading">
+              <h2 id="auth-title">{isRegistering ? 'Create your account' : 'Welcome back'}</h2>
               <p>
                 {isRegistering
-                  ? t.registerDescription
-                  : t.loginDescription}
+                  ? 'Join Mashariq and start chatting with your people.'
+                  : 'Sign in to pick up where you left off.'}
               </p>
             </div>
 
-            <div className="auth-mode-switch" role="tablist" aria-label={t.accountAccess}>
-              <button
-                type="button"
-                className={!isRegistering ? 'active' : ''}
-                role="tab"
-                aria-selected={!isRegistering}
-                onClick={() => this.setMode('login')}
-              >
-                {t.signIn}
-              </button>
-              <button
-                type="button"
-                className={isRegistering ? 'active' : ''}
-                role="tab"
-                aria-selected={isRegistering}
-                onClick={() => this.setMode('register')}
-              >
-                {t.createAccount}
-              </button>
-            </div>
-
-            <form className="auth-form" onSubmit={this.handleSubmit}>
+            <form onSubmit={this.handleSubmit}>
               {isRegistering && (
                 <>
-                  <label className="auth-field">
-                    <span>{t.fullName}</span>
+                  <div className="mb-3">
+                    <label className="form-label" htmlFor="name">Full name</label>
                     <input
-                      autoComplete="name"
+                      className="form-control auth-input"
+                      id="name"
                       name="name"
+                      type="text"
+                      autoComplete="name"
+                      value={name}
                       onChange={this.handleChange}
-                      placeholder={t.fullNamePlaceholder}
+                      placeholder="Your full name"
                       required
-                      value={form.name}
                     />
-                  </label>
-                  <div className="auth-field-row">
-                    <label className="auth-field">
-                      <span>{t.displayName}</span>
-                      <input
-                        autoComplete="nickname"
-                        name="nickName"
-                        onChange={this.handleChange}
-                        placeholder={t.displayNamePlaceholder}
-                        required
-                        value={form.nickName}
-                      />
-                    </label>
-                    <label className="auth-field">
-                      <span>{t.mobile}</span>
-                      <input
-                        autoComplete="tel"
-                        name="mobileNo"
-                        onChange={this.handleChange}
-                        placeholder={t.mobilePlaceholder}
-                        type="tel"
-                        required
-                        value={form.mobileNo}
-                      />
-                    </label>
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label" htmlFor="nickName">Display name</label>
+                    <input
+                      className="form-control auth-input"
+                      id="nickName"
+                      name="nickName"
+                      type="text"
+                      autoComplete="nickname"
+                      value={nickName}
+                      onChange={this.handleChange}
+                      placeholder="How people see you"
+                      required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label" htmlFor="mobileNo">Mobile number</label>
+                    <input
+                      className="form-control auth-input"
+                      id="mobileNo"
+                      name="mobileNo"
+                      type="tel"
+                      autoComplete="tel"
+                      value={mobileNo}
+                      onChange={this.handleChange}
+                      placeholder="Your phone number"
+                      required
+                    />
                   </div>
                 </>
               )}
 
-              <label className="auth-field">
-                <span>{t.email}</span>
+              <div className="mb-3">
+                <label className="form-label" htmlFor="email">Email address</label>
                 <input
-                  autoComplete="email"
+                  className="form-control auth-input"
+                  id="email"
                   name="email"
-                  onChange={this.handleChange}
-                  placeholder={t.emailPlaceholder}
                   type="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={this.handleChange}
+                  placeholder="you@example.com"
                   required
-                  value={form.email}
                 />
-              </label>
-              <label className="auth-field">
-                <span>{t.password}</span>
-                <span className="auth-password-wrap">
-                  <input
-                    autoComplete={isRegistering ? 'new-password' : 'current-password'}
-                    minLength={8}
-                    name="password"
-                    onChange={this.handleChange}
-                    placeholder={isRegistering ? t.newPasswordPlaceholder : t.currentPasswordPlaceholder}
-                    type={passwordType}
-                    required
-                    value={form.password}
-                  />
-                  <button
-                    aria-label={passwordVisible ? t.hidePassword : t.showPassword}
-                    className="auth-password-toggle"
-                    onClick={() => this.setState((state) => ({ passwordVisible: !state.passwordVisible }))}
-                    type="button"
-                  >
-                    {passwordVisible ? t.hide : t.show}
-                  </button>
-                </span>
-              </label>
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label" htmlFor="password">Password</label>
+                <input
+                  className="form-control auth-input"
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete={isRegistering ? 'new-password' : 'current-password'}
+                  value={password}
+                  onChange={this.handleChange}
+                  placeholder="Enter your password"
+                  required
+                />
+              </div>
+
               {isRegistering && (
-                <label className="auth-field">
-                  <span>{t.confirmPassword}</span>
+                <div className="mb-3">
+                  <label className="form-label" htmlFor="confirmPassword">Confirm password</label>
                   <input
-                    autoComplete="new-password"
-                    minLength={8}
+                    className="form-control auth-input"
+                    id="confirmPassword"
                     name="confirmPassword"
+                    type="password"
+                    autoComplete="new-password"
+                    value={confirmPassword}
                     onChange={this.handleChange}
-                    placeholder={t.confirmPasswordPlaceholder}
-                    type={passwordType}
+                    placeholder="Enter your password again"
                     required
-                    value={form.confirmPassword}
                   />
-                </label>
+                </div>
               )}
 
-              {error && <p className="auth-error" role="alert">{error}</p>}
+              {error && (
+                <div className="alert alert-danger auth-error" role="alert">
+                  {error}
+                </div>
+              )}
 
-              <button className="auth-submit" disabled={submitting} type="submit">
-                {submitting
-                  ? t.pleaseWait
-                  : isRegistering
-                    ? t.createAccountAction
-                    : t.signIn}
-                {!submitting && <span aria-hidden="true">→</span>}
+              <button className="btn auth-submit w-100" type="submit" disabled={isSubmitting}>
+                {isSubmitting
+                  ? 'Please wait…'
+                  : isRegistering ? 'Create account' : 'Sign in'}
               </button>
             </form>
 
-            <p className="auth-terms">
-              {t.terms}
+            <p className="auth-switch">
+              {isRegistering ? 'Already have an account?' : 'New to Mashariq?'}{' '}
+              <button
+                className="auth-switch-button"
+                type="button"
+                onClick={() => this.handleModeChange(isRegistering ? 'login' : 'register')}
+              >
+                {isRegistering ? 'Sign in' : 'Create an account'}
+              </button>
             </p>
           </div>
         </section>
