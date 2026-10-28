@@ -27,6 +27,11 @@ class ChatSockets {
   }
 
   onConnection(socket) {
+    const userConversations = conversations.getConversationsForUser(socket.user.userSID);
+    for (const conversation of userConversations) {
+      socket.join(this.roomName(conversation.SID));
+    }
+
     socket.on('join', (payload, ack) => this.onJoin(socket, payload, ack));
     socket.on('message', (payload, ack) => this.onMessage(socket, payload, ack));
     socket.on('typing', (payload) => this.onTyping(socket, payload));
@@ -40,9 +45,6 @@ class ChatSockets {
       return;
     }
 
-    for (const room of socket.rooms) {
-      if (room !== socket.id) socket.leave(room);
-    }
     socket.join(this.roomName(conversationSID));
     if (ack) ack({ ok: true });
   }

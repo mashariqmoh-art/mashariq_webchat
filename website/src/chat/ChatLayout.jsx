@@ -1,5 +1,6 @@
 import React from 'react';
 import api from '../shared/api';
+import socketClient from '../shared/socket';
 import ConversationList from './ConversationList';
 import MessageView from './MessageView';
 import './ChatLayout.css';
@@ -10,6 +11,7 @@ class ChatLayout extends React.Component {
     this.state = {
       conversations: [],
       selectedSID: null,
+      unreadCounts: {},
       loading: true,
       error: null,
       search: '',
@@ -26,7 +28,12 @@ class ChatLayout extends React.Component {
   }
 
   componentDidMount() {
+    socketClient.on('message', this.handleIncomingMessage);
     this.loadConversations();
+  }
+
+  componentWillUnmount() {
+    socketClient.off('message', this.handleIncomingMessage);
   }
 
   async loadConversations() {
@@ -39,7 +46,33 @@ class ChatLayout extends React.Component {
   }
 
   handleSelect = (sid) => {
-    this.setState({ selectedSID: sid });
+    this.setState((state) => {
+      const unreadCounts = { ...state.unreadCounts };
+      delete unreadCounts[sid];
+      delete unreadCounts[String(sid)];
+      return { selectedSID: sid, unreadCounts };
+    });
+  };
+
+  handleIncomingMessage = (message) => {
+    if (
+      !this.currentUser
+      || Number(message.sender_SID) === Number(this.currentUser.userSID)
+    ) {
+      return;
+    }
+
+    this.setState((state) => {
+      const conversationSID = String(message.conversation_SID);
+      if (conversationSID === String(state.selectedSID)) return null;
+
+      return {
+        unreadCounts: {
+          ...state.unreadCounts,
+          [conversationSID]: (state.unreadCounts[conversationSID] || 0) + 1,
+        },
+      };
+    });
   };
 
   handleSearch = (event) => {
@@ -117,6 +150,7 @@ class ChatLayout extends React.Component {
     const {
       conversations,
       selectedSID,
+      unreadCounts,
       loading,
       error,
       search,
@@ -253,6 +287,7 @@ class ChatLayout extends React.Component {
             <ConversationList
               conversations={filteredConversations}
               selectedSID={selectedSID}
+              unreadCounts={unreadCounts}
               onSelect={this.handleSelect}
               emptyStateText={null}
               language={language}
