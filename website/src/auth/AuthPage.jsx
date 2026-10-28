@@ -38,7 +38,7 @@ const translations = {
     email: 'Email address',
     emailPlaceholder: 'you@example.com',
     password: 'Password',
-    newPasswordPlaceholder: 'At least 8 characters',
+    newPasswordPlaceholder: 'At least 6 characters',
     currentPasswordPlaceholder: 'Enter your password',
     confirmPassword: 'Confirm password',
     confirmPasswordPlaceholder: 'Enter your password again',
@@ -77,7 +77,7 @@ const translations = {
     email: 'البريد الإلكتروني',
     emailPlaceholder: 'you@example.com',
     password: 'كلمة المرور',
-    newPasswordPlaceholder: '8 أحرف على الأقل',
+    newPasswordPlaceholder: '6 أحرف على الأقل',
     currentPasswordPlaceholder: 'أدخل كلمة المرور',
     confirmPassword: 'تأكيد كلمة المرور',
     confirmPasswordPlaceholder: 'أعد إدخال كلمة المرور',
@@ -317,7 +317,7 @@ export default class AuthPage extends React.Component {
                 <span className="auth-password-wrap">
                   <input
                     autoComplete={isRegistering ? 'new-password' : 'current-password'}
-                    minLength={8}
+                    minLength={6}
                     name="password"
                     onChange={this.handleChange}
                     placeholder={isRegistering ? t.newPasswordPlaceholder : t.currentPasswordPlaceholder}
@@ -340,7 +340,7 @@ export default class AuthPage extends React.Component {
                   <span>{t.confirmPassword}</span>
                   <input
                     autoComplete="new-password"
-                    minLength={8}
+                    minLength={6}
                     name="confirmPassword"
                     onChange={this.handleChange}
                     placeholder={t.confirmPasswordPlaceholder}
