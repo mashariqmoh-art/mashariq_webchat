@@ -12,7 +12,8 @@ class MessageRepository {
 
   getMessageBySID(sid) {
     return db.prepare(`
-      SELECT m.*, u.name AS senderName, u.nickName AS senderNickName
+      SELECT m.*, u.name AS senderName, u.nickName AS senderNickName,
+             u.profilePicturePath AS senderProfilePicturePath
       FROM table_Message m
       JOIN table_User u ON u.SID = m.sender_SID
       WHERE m.SID = ?
@@ -21,7 +22,8 @@ class MessageRepository {
 
   getMessagesForConversation(conversationSID) {
     return db.prepare(`
-      SELECT m.*, u.name AS senderName, u.nickName AS senderNickName
+      SELECT m.*, u.name AS senderName, u.nickName AS senderNickName,
+             u.profilePicturePath AS senderProfilePicturePath
       FROM table_Message m
       JOIN table_User u ON u.SID = m.sender_SID
       WHERE m.conversation_SID = ?

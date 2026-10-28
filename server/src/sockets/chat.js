@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const conversations = require('../db/conversations');
 const messages = require('../db/messages');
+const users = require('../db/user');
 
 class ChatSockets {
   constructor(io) {
@@ -77,10 +78,11 @@ class ChatSockets {
 
     if (!conversations.isMember(conversationSID, socket.user.userSID)) return;
 
+    const profile = users.getProfileBySID(socket.user.userSID);
     socket.to(this.roomName(conversationSID)).emit('typing', {
       conversationSID,
       userSID: socket.user.userSID,
-      nickName: socket.user.nickName,
+      nickName: profile ? profile.nickName : socket.user.nickName,
     });
   }
 }

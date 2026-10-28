@@ -10,6 +10,7 @@ services:
       PORT: 3001
       JWT_SECRET: ${JWT_SECRET:-mashariq-docker-dev-secret}
       DB_ENGINE: ${DB_ENGINE:-mysql}
+      UPLOAD_DIR: ${UPLOAD_DIR:-/data/uploads}
     volumes:
       - server-data:/data
     restart: unless-stopped

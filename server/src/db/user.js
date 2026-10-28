@@ -21,6 +21,18 @@ class User {
     return this.repo.findUserBySID(sid);
   }
 
+  getProfileBySID(sid) {
+    return this.repo.getProfileBySID(sid);
+  }
+
+  updateProfile(sid, profile) {
+    return this.repo.updateProfile(sid, profile);
+  }
+
+  updateProfilePicture(sid, profilePicturePath) {
+    return this.repo.updateProfilePicture(sid, profilePicturePath);
+  }
+
   listUsers() {
     return this.repo.listUsers();
   }

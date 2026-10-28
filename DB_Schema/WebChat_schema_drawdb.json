@@ -109,6 +109,34 @@
           "size": ""
         },
         {
+          "name": "profilePicturePath",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "unsigned": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": "f_00000010pictur",
+          "size": ""
+        },
+        {
+          "name": "status",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "unsigned": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": "f_00000011status",
+          "size": ""
+        },
+        {
           "name": "createdAt",
           "type": "TEXT",
           "default": "",

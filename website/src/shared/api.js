@@ -24,6 +24,11 @@ class ApiClient {
     return localStorage.getItem('token');
   }
 
+  assetUrl(path) {
+    if (!path) return '';
+    return /^https?:\/\//.test(path) ? path : `${this.baseUrl}${path}`;
+  }
+
   getCurrentUser() {
     const token = this.getToken();
     if (!token) return null;
@@ -58,6 +63,14 @@ class ApiClient {
 
   post(path, body) {
     return this.request(path, { method: 'POST', body: JSON.stringify(body) });
+  }
+
+  patch(path, body) {
+    return this.request(path, { method: 'PATCH', body: JSON.stringify(body) });
+  }
+
+  delete(path) {
+    return this.request(path, { method: 'DELETE' });
   }
 }
 

@@ -11,7 +11,7 @@
 
 | Table | What it does |
 |---|---|
-| `table_User` | Stores every user — name, email, nickname, mobile number, and password hash. Both chat users and admins live here. |
+| `table_User` | Stores every user — name, email, nickname, mobile number, profile picture path, short status, and password hash. Both chat users and admins live here. |
 | `table_Conversation` | A chat thread. `isGroup=0` means a private 1:1 chat, `isGroup=1` means a group chat. |
 | `table_ConversationMember` | Links users to conversations — who is in which chat, and whether they are a group admin. |
 | `table_Message` | Every message sent in a chat — who sent it, where, its text, and when. |

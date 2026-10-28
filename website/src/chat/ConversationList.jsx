@@ -1,4 +1,5 @@
 import React from 'react';
+import api from '../shared/api';
 
 class ConversationList extends React.Component {
   constructor(props) {
@@ -25,9 +26,14 @@ class ConversationList extends React.Component {
             onClick={() => onSelect(conversation.SID)}
             aria-current={conversation.SID === selectedSID ? 'page' : undefined}
           >
-            <span className={`chat-conversation-avatar ${conversation.isGroup ? 'group' : ''}`}>
-              {this.displayName(conversation).trim().charAt(0).toLocaleUpperCase()}
-            </span>
+            {conversation.otherUserProfilePicturePath && !conversation.isGroup ? (
+              <img alt="" className="chat-conversation-avatar chat-avatar-image"
+                src={api.assetUrl(conversation.otherUserProfilePicturePath)} />
+            ) : (
+              <span className={`chat-conversation-avatar ${conversation.isGroup ? 'group' : ''}`}>
+                {this.displayName(conversation).trim().charAt(0).toLocaleUpperCase()}
+              </span>
+            )}
             <span className="chat-conversation-copy">
               <span className="chat-conversation-title">{this.displayName(conversation)}</span>
               <span className="chat-conversation-subtitle">

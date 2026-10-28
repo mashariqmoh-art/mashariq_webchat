@@ -2,6 +2,7 @@ import React from 'react';
 import api from '../shared/api';
 import ConversationList from './ConversationList';
 import MessageView from './MessageView';
+import ProfileDialog from './ProfileDialog';
 import './ChatLayout.css';
 
 class ChatLayout extends React.Component {
@@ -21,13 +22,41 @@ class ChatLayout extends React.Component {
       usersError: null,
       userSearch: '',
       creatingConversation: false,
+      profile: null,
+      profileLoading: false,
+      profileError: null,
+      profileOpen: false,
     };
     this.currentUser = api.getCurrentUser();
   }
 
   componentDidMount() {
     this.loadConversations();
+    this.loadProfile();
   }
+
+  loadProfile = async () => {
+    this.setState({ profileLoading: true, profileError: null });
+    try {
+      const data = await api.get('/api/profile');
+      this.setState({ profile: data.profile, profileLoading: false });
+    } catch (err) {
+      this.setState({ profileError: err.message, profileLoading: false });
+    }
+  };
+
+  openProfile = () => {
+    this.setState({ profileOpen: true });
+    if (!this.state.profile && !this.state.profileLoading) this.loadProfile();
+  };
+
+  handleProfileUpdated = (profile) => {
+    this.setState({ profile, profileError: null });
+  };
+
+  closeProfile = () => {
+    this.setState({ profileOpen: false });
+  };
 
   async loadConversations() {
     try {
@@ -128,6 +157,10 @@ class ChatLayout extends React.Component {
       usersError,
       userSearch,
       creatingConversation,
+      profile,
+      profileLoading,
+      profileError,
+      profileOpen,
     } = this.state;
     const isArabic = language === 'ar';
     const copy = isArabic
@@ -184,8 +217,10 @@ class ChatLayout extends React.Component {
       `${user.nickName || ''} ${user.name || ''}`.toLocaleLowerCase().includes(userSearch.trim().toLocaleLowerCase())
     ));
     const selected = conversations.find((c) => c.SID === selectedSID) || null;
-    const accountName = this.currentUser && this.currentUser.nickName
-      ? this.currentUser.nickName
+    const accountName = profile && (profile.nickName || profile.name)
+      ? (profile.nickName || profile.name)
+      : this.currentUser && this.currentUser.nickName
+        ? this.currentUser.nickName
       : copy.yourAccount;
     const avatarLetter = accountName.trim().charAt(0).toLocaleUpperCase() || '?';
 
@@ -260,11 +295,19 @@ class ChatLayout extends React.Component {
           )}
 
           <footer className="chat-profile">
-            <span className="chat-profile-avatar">{avatarLetter}</span>
-            <span className="chat-profile-copy">
-              <strong>{accountName}</strong>
-              <small>{copy.yourAccount}</small>
-            </span>
+            <button aria-label={isArabic ? 'عرض وتعديل الملف الشخصي' : 'View and edit profile'}
+              className="chat-profile-open" onClick={this.openProfile} type="button">
+              {profile && profile.profilePicturePath ? (
+                <img alt="" className="chat-profile-avatar chat-avatar-image"
+                  src={api.assetUrl(profile.profilePicturePath)} />
+              ) : (
+                <span className="chat-profile-avatar">{avatarLetter}</span>
+              )}
+              <span className="chat-profile-copy">
+                <strong>{accountName}</strong>
+                <small>{(profile && profile.status) || copy.yourAccount}</small>
+              </span>
+            </button>
             <button
               aria-label={copy.signOut}
               className="chat-signout"
@@ -340,9 +383,14 @@ class ChatLayout extends React.Component {
                     onClick={() => this.startConversation(user.SID)}
                     type="button"
                   >
-                    <span className="chat-conversation-avatar">
-                      {(user.nickName || user.name || '?').trim().charAt(0).toLocaleUpperCase()}
-                    </span>
+                    {user.profilePicturePath ? (
+                      <img alt="" className="chat-conversation-avatar chat-avatar-image"
+                        src={api.assetUrl(user.profilePicturePath)} />
+                    ) : (
+                      <span className="chat-conversation-avatar">
+                        {(user.nickName || user.name || '?').trim().charAt(0).toLocaleUpperCase()}
+                      </span>
+                    )}
                     <span className="chat-conversation-copy">
                       <span className="chat-conversation-title">{user.nickName || user.name}</span>
                       {user.name && user.nickName && user.name !== user.nickName && (
@@ -367,6 +415,17 @@ class ChatLayout extends React.Component {
               </footer>
             </section>
           </div>
+        )}
+        {profileOpen && (
+          <ProfileDialog
+            error={profileError}
+            language={language}
+            loading={profileLoading}
+            onClose={this.closeProfile}
+            onProfileUpdated={this.handleProfileUpdated}
+            onRetry={this.loadProfile}
+            profile={profile}
+          />
         )}
       </main>
     );

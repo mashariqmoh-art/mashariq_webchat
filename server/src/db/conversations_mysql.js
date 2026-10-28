@@ -54,7 +54,9 @@ class ConversationRepository {
   getConversationsForUser(userSID) {
     return db.prepare(`
       SELECT c.SID, c.name, c.isGroup, c.createdBy_SID, c.createdAt,
-             u.SID AS otherUserSID, u.name AS otherUserName, u.nickName AS otherUserNickName
+             u.SID AS otherUserSID, u.name AS otherUserName, u.nickName AS otherUserNickName,
+             u.profilePicturePath AS otherUserProfilePicturePath,
+             u.status AS otherUserStatus
       FROM table_Conversation c
       JOIN table_ConversationMember cm
         ON cm.conversation_SID = c.SID AND cm.user_SID = ?

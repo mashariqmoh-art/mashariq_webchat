@@ -2,6 +2,7 @@ require('dotenv').config({ path: require('path').join(__dirname, '../.env') });
 
 const express = require('express');
 const http = require('http');
+const path = require('path');
 const cors = require('cors');
 const { Server: SocketIOServer } = require('socket.io');
 const db = require('./db/db');
@@ -9,8 +10,10 @@ const authRoutes = require('./routes/auth');
 const conversationRoutes = require('./routes/conversations');
 const messageRoutes = require('./routes/messages');
 const adminRoutes = require('./routes/admin');
+const profileRoutes = require('./routes/profile');
 const auth = require('./middleware/auth');
 const ChatSockets = require('./sockets/chat');
+const uploadDirectory = process.env.UPLOAD_DIR || path.join(__dirname, '..', 'uploads');
 
 class Server {
   constructor() {
@@ -34,10 +37,13 @@ class Server {
       origin: /^https?:\/\/localhost(:\d+)?$/,
       credentials: true
     }));
-    this.app.use(express.json());
   }
 
   registerRoutes() {
+    this.app.use('/uploads', express.static(uploadDirectory, { dotfiles: 'deny', index: false }));
+    this.app.use('/api/profile', express.json({ limit: '3mb' }), profileRoutes);
+    this.app.use(express.json());
+
     this.app.get('/api/health', (req, res) => {
       res.json({ ok: true });
     });

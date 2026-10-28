@@ -1,6 +1,7 @@
 import React from 'react';
 import MessageList from './MessageList';
 import MessageComposer from './MessageComposer';
+import api from '../shared/api';
 
 class MessageView extends React.Component {
   constructor(props) {
@@ -54,13 +55,18 @@ class MessageView extends React.Component {
           >
             {isArabic ? '→' : '←'}
           </button>
-          <span className={`chat-header-avatar ${conversation.isGroup ? 'group' : ''}`}>{initial}</span>
+          {conversation.otherUserProfilePicturePath && !conversation.isGroup ? (
+            <img alt="" className="chat-header-avatar chat-avatar-image"
+              src={api.assetUrl(conversation.otherUserProfilePicturePath)} />
+          ) : (
+            <span className={`chat-header-avatar ${conversation.isGroup ? 'group' : ''}`}>{initial}</span>
+          )}
           <span className="chat-header-copy">
             <strong>{title}</strong>
             <small>
               {conversation.isGroup
                 ? (isArabic ? 'محادثة جماعية' : 'Group conversation')
-                : (isArabic ? 'محادثة مباشرة' : 'Direct conversation')}
+                : (conversation.otherUserStatus || (isArabic ? 'محادثة مباشرة' : 'Direct conversation'))}
             </small>
           </span>
           <span className="chat-header-mark" aria-hidden="true">✳</span>

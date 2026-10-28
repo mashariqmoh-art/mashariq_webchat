@@ -108,9 +108,14 @@ class MessageList extends React.Component {
                 className={`chat-message-row ${ownMessage ? 'own' : ''}`}
               >
                 {!ownMessage && (
-                  <span className="chat-message-avatar">
-                    {(message.senderNickName || '?').trim().charAt(0).toLocaleUpperCase()}
-                  </span>
+                  message.senderProfilePicturePath ? (
+                    <img alt="" className="chat-message-avatar chat-avatar-image"
+                      src={api.assetUrl(message.senderProfilePicturePath)} />
+                  ) : (
+                    <span className="chat-message-avatar">
+                      {(message.senderNickName || '?').trim().charAt(0).toLocaleUpperCase()}
+                    </span>
+                  )
                 )}
                 <div className={`chat-bubble ${ownMessage ? 'own' : ''}`}>
                   {!ownMessage && message.senderNickName && (

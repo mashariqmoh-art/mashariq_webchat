@@ -358,8 +358,26 @@
   font-weight: 700;
 }
 
+.chat-avatar-image {
+  object-fit: cover;
+}
+
+.chat-profile-open {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  text-align: start;
+}
+
 .chat-profile-copy {
   flex: 1;
+  min-width: 0;
   gap: 3px;
 }
 
@@ -372,8 +390,11 @@
 }
 
 .chat-profile-copy small {
+  overflow: hidden;
   color: var(--chat-muted);
   font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .chat-signout {

@@ -73,6 +73,14 @@ Status legend: ✅ Completed · 🟡 Partial · ⬜ Not started
 | 8.4 Save call logs as chat messages | [task-8.4-call-log-messages.md](task-8.4-call-log-messages.md) | ⬜ |
 | 8.5 Test the call loop | [task-8.5-test-call-loop.md](task-8.5-test-call-loop.md) | ⬜ |
 
+## 9. User Profile & Status
+| Task | File | Status |
+|---|---|---|
+| 9.1 Persist profile data and add authenticated endpoints | [task-9.1-profile-api.md](task-9.1-profile-api.md) | ✅ |
+| 9.2 Secure profile picture uploads and storage | [task-9.2-profile-picture.md](task-9.2-profile-picture.md) | ✅ |
+| 9.3 Build the profile editor and integrate chat avatars | [task-9.3-profile-ui.md](task-9.3-profile-ui.md) | ✅ |
+| 9.4 Verify profile, status, authorization, and upload flows | [task-9.4-profile-verification.md](task-9.4-profile-verification.md) | ✅ |
+
 ## Decisions
 - **Test runner:** Vitest
 - **State management:** Plain React (useState/useContext)

@@ -24,6 +24,30 @@ class UserRepository {
     return db.prepare('SELECT * FROM table_User WHERE SID = ?').get(sid);
   }
 
+  getProfileBySID(sid) {
+    return db.prepare(`
+      SELECT SID, name, email, nickName, mobileNo, profilePicturePath, status, createdAt
+      FROM table_User
+      WHERE SID = ?
+    `).get(sid);
+  }
+
+  updateProfile(sid, profile) {
+    const fields = Object.keys(profile);
+    if (fields.length === 0) return this.getProfileBySID(sid);
+
+    const assignments = fields.map((field) => `${field} = ?`).join(', ');
+    db.prepare(`UPDATE table_User SET ${assignments} WHERE SID = ?`)
+      .run(...fields.map((field) => profile[field]), sid);
+    return this.getProfileBySID(sid);
+  }
+
+  updateProfilePicture(sid, profilePicturePath) {
+    db.prepare('UPDATE table_User SET profilePicturePath = ? WHERE SID = ?')
+      .run(profilePicturePath, sid);
+    return this.getProfileBySID(sid);
+  }
+
   listUsers() {
     return db.prepare(`
       SELECT u.SID, u.name, u.email, u.nickName, u.mobileNo, u.isActive, u.createdAt,
@@ -70,7 +94,7 @@ class UserRepository {
 
   findAvailableUsers(excludeSID) {
     return db.prepare(`
-      SELECT SID, name, nickName
+      SELECT SID, name, nickName, profilePicturePath
       FROM table_User
       WHERE isActive = 1 AND SID != ?
       ORDER BY nickName COLLATE NOCASE

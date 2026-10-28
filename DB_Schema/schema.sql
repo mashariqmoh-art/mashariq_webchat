@@ -23,6 +23,8 @@ CREATE TABLE IF NOT EXISTS table_User (
     mobileNo      TEXT    NOT NULL,
     password      TEXT    NOT NULL,                  -- bcrypt hash, never plain text
     isActive      INTEGER NOT NULL DEFAULT 1,       -- 0=disabled, 1=active
+    profilePicturePath TEXT,
+    status        TEXT,
     createdAt     TEXT    NOT NULL DEFAULT (datetime('now')),
     createdBy_SID INTEGER REFERENCES table_User(SID) ON DELETE SET NULL
                                               -- which admin created this user (NULL for self-registered)
