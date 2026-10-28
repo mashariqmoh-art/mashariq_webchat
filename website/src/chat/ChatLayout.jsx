@@ -38,6 +38,29 @@ class ChatLayout extends React.Component {
     this.loadProfile();
   }
 
+  loadProfile = async () => {
+    this.setState({ profileLoading: true, profileError: null });
+    try {
+      const data = await api.get('/api/profile');
+      this.setState({ profile: data.profile, profileLoading: false });
+    } catch (err) {
+      this.setState({ profileError: err.message, profileLoading: false });
+    }
+  };
+
+  openProfile = () => {
+    this.setState({ profileOpen: true });
+    if (!this.state.profile && !this.state.profileLoading) this.loadProfile();
+  };
+
+  handleProfileUpdated = (profile) => {
+    this.setState({ profile, profileError: null });
+  };
+
+  closeProfile = () => {
+    this.setState({ profileOpen: false });
+  };
+
   componentWillUnmount() {
     socketClient.off('message', this.handleIncomingMessage);
   }

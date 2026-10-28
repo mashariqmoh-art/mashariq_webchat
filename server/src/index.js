@@ -7,7 +7,6 @@ if (!process.env.JWT_SECRET) {
 
 const express = require('express');
 const http = require('http');
-const path = require('path');
 const cors = require('cors');
 const { Server: SocketIOServer } = require('socket.io');
 const db = require('./db/db');
