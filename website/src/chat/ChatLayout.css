@@ -266,6 +266,40 @@
   background: var(--chat-soft-orange);
 }
 
+.chat-conversation.unread:not(.active) {
+  border-color: var(--chat-orange);
+  background: #ffe2cf;
+  box-shadow: inset 3px 0 0 var(--chat-orange);
+}
+
+.chat-conversation.unread .chat-conversation-title {
+  color: var(--chat-orange-deep);
+  font-weight: 800;
+}
+
+.chat-app[data-theme="dark"] .chat-conversation.unread:not(.active) {
+  border-color: #ef8b50;
+  background: #493020;
+  box-shadow: inset 3px 0 0 #ef8b50;
+}
+
+.chat-app[data-theme="dark"] .chat-conversation.unread .chat-conversation-title {
+  color: #ffb27f;
+}
+
+.chat-unread-badge {
+  display: inline-grid;
+  min-width: 20px;
+  height: 20px;
+  place-items: center;
+  padding: 0 5px;
+  border-radius: 10px;
+  color: #fffaf5;
+  background: var(--chat-orange-deep);
+  font-size: 11px;
+  font-weight: 800;
+}
+
 .chat-conversation-avatar,
 .chat-header-avatar,
 .chat-message-avatar {

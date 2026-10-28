@@ -1,4 +1,9 @@
-require('dotenv').config({ path: require('path').join(__dirname, '../.env') });
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '..', '.env') });
+
+if (!process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET is not set. Add it to server/.env before starting the server.');
+}
 
 const express = require('express');
 const http = require('http');

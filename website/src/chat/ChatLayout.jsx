@@ -1,5 +1,6 @@
 import React from 'react';
 import api from '../shared/api';
+import socketClient from '../shared/socket';
 import ConversationList from './ConversationList';
 import MessageView from './MessageView';
 import ProfileDialog from './ProfileDialog';
@@ -11,6 +12,7 @@ class ChatLayout extends React.Component {
     this.state = {
       conversations: [],
       selectedSID: null,
+      unreadCounts: {},
       loading: true,
       error: null,
       search: '',
@@ -31,32 +33,14 @@ class ChatLayout extends React.Component {
   }
 
   componentDidMount() {
+    socketClient.on('message', this.handleIncomingMessage);
     this.loadConversations();
     this.loadProfile();
   }
 
-  loadProfile = async () => {
-    this.setState({ profileLoading: true, profileError: null });
-    try {
-      const data = await api.get('/api/profile');
-      this.setState({ profile: data.profile, profileLoading: false });
-    } catch (err) {
-      this.setState({ profileError: err.message, profileLoading: false });
-    }
-  };
-
-  openProfile = () => {
-    this.setState({ profileOpen: true });
-    if (!this.state.profile && !this.state.profileLoading) this.loadProfile();
-  };
-
-  handleProfileUpdated = (profile) => {
-    this.setState({ profile, profileError: null });
-  };
-
-  closeProfile = () => {
-    this.setState({ profileOpen: false });
-  };
+  componentWillUnmount() {
+    socketClient.off('message', this.handleIncomingMessage);
+  }
 
   async loadConversations() {
     try {
@@ -68,7 +52,33 @@ class ChatLayout extends React.Component {
   }
 
   handleSelect = (sid) => {
-    this.setState({ selectedSID: sid });
+    this.setState((state) => {
+      const unreadCounts = { ...state.unreadCounts };
+      delete unreadCounts[sid];
+      delete unreadCounts[String(sid)];
+      return { selectedSID: sid, unreadCounts };
+    });
+  };
+
+  handleIncomingMessage = (message) => {
+    if (
+      !this.currentUser
+      || Number(message.sender_SID) === Number(this.currentUser.userSID)
+    ) {
+      return;
+    }
+
+    this.setState((state) => {
+      const conversationSID = String(message.conversation_SID);
+      if (conversationSID === String(state.selectedSID)) return null;
+
+      return {
+        unreadCounts: {
+          ...state.unreadCounts,
+          [conversationSID]: (state.unreadCounts[conversationSID] || 0) + 1,
+        },
+      };
+    });
   };
 
   handleSearch = (event) => {
@@ -146,6 +156,7 @@ class ChatLayout extends React.Component {
     const {
       conversations,
       selectedSID,
+      unreadCounts,
       loading,
       error,
       search,
@@ -288,6 +299,7 @@ class ChatLayout extends React.Component {
             <ConversationList
               conversations={filteredConversations}
               selectedSID={selectedSID}
+              unreadCounts={unreadCounts}
               onSelect={this.handleSelect}
               emptyStateText={null}
               language={language}
