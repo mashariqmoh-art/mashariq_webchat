@@ -40,6 +40,10 @@ class User {
   findRoleByName(name) {
     return this.repo.findRoleByName(name);
   }
+
+  findAvailableUsers(excludeSID) {
+    return this.repo.findAvailableUsers(excludeSID);
+  }
 }
 
 module.exports = new User();

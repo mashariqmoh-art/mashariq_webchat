@@ -1,0 +1,29 @@
+services:
+
+  server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      PORT: 3001
+      JWT_SECRET: ${JWT_SECRET:-mashariq-docker-dev-secret}
+      DB_ENGINE: ${DB_ENGINE:-mysql}
+    volumes:
+      - server-data:/data
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./website
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:3001}
+    ports:
+      - "8080:80"
+    depends_on:
+      - server
+    restart: unless-stopped
+
+volumes:
+  server-data:

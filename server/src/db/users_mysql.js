@@ -67,6 +67,15 @@ class UserRepository {
   findRoleByName(name) {
     return db.prepare('SELECT * FROM table_Role WHERE name = ? AND isActive = 1').get(name);
   }
+
+  findAvailableUsers(excludeSID) {
+    return db.prepare(`
+      SELECT SID, name, nickName
+      FROM table_User
+      WHERE isActive = 1 AND SID != ?
+      ORDER BY nickName COLLATE NOCASE
+    `).all(excludeSID);
+  }
 }
 
 module.exports = new UserRepository();

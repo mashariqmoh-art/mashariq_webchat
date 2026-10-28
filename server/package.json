@@ -8,6 +8,7 @@
     "start": "node src/index.js",
     "token": "node src/scripts/generate_token.js",
     "seed": "node src/scripts/seed_users.js",
+    "populate": "node src/scripts/populate_dummy.js",
     "seed:admin": "node src/scripts/seed_admin.js",
     "chat:debug": "node src/scripts/debug_chat.js"
   },

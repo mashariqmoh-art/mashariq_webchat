@@ -26,7 +26,8 @@ class MessageComposer extends React.Component {
     }
   };
 
-  send = () => {
+  send = (event) => {
+    if (event) event.preventDefault();
     const content = this.state.content.trim();
     if (!content) return;
 
@@ -52,22 +53,29 @@ class MessageComposer extends React.Component {
   };
 
   render() {
+    const isArabic = this.props.language === 'ar';
+
     return (
-      <div className="border-top p-3">
-        <div className="input-group">
+      <form className="chat-composer" onSubmit={this.send}>
+        <div className="chat-composer-inner">
           <input
+            aria-label={isArabic ? 'اكتب رسالة' : 'Type a message'}
             type="text"
-            className="form-control"
-            placeholder="Type a message"
+            className="chat-composer-input"
+            placeholder={isArabic ? 'اكتب رسالة…' : 'Write a message…'}
             value={this.state.content}
             onChange={this.handleChange}
             onKeyDown={this.handleKeyDown}
           />
-          <button type="button" className="btn btn-primary" onClick={this.send}>
-            Send
+          <button type="submit" className="chat-send-button" disabled={!this.state.content.trim()}>
+            <span>{isArabic ? 'إرسال' : 'Send'}</span>
+            <span aria-hidden="true">{isArabic ? '←' : '→'}</span>
           </button>
         </div>
-      </div>
+        <p className="chat-composer-hint">
+          {isArabic ? 'اضغط Enter للإرسال' : 'Press Enter to send'}
+        </p>
+      </form>
     );
   }
 }

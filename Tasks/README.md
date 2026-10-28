@@ -59,6 +59,19 @@ Status legend: ✅ Completed · 🟡 Partial · ⬜ Not started
 | 7.2 Add CORS and security basics | [task-7.2-cors-security.md](task-7.2-cors-security.md) | 🟡 |
 | 7.3 Add light tests | [task-7.3-light-tests.md](task-7.3-light-tests.md) | ⬜ |
 | 7.4 Document build & run commands | [task-7.4-document-commands.md](task-7.4-document-commands.md) | ⬜ |
+| 7.5 Build the "New Group" creation UI | [task-7.5-group-create-ui.md](task-7.5-group-create-ui.md) | ⬜ |
+| 7.6 Add group member endpoints | [task-7.6-group-member-endpoints.md](task-7.6-group-member-endpoints.md) | ⬜ |
+| 7.7 Build the group members UI | [task-7.7-group-members-ui.md](task-7.7-group-members-ui.md) | ⬜ |
+| 7.8 Test the group loop | [task-7.8-test-group-loop.md](task-7.8-test-group-loop.md) | ⬜ |
+
+## 8. Video & Audio Calls
+| Task | File | Status |
+|---|---|---|
+| 8.1 Add call signaling to the server | [task-8.1-call-signaling.md](task-8.1-call-signaling.md) | ⬜ |
+| 8.2 Build the call manager on the client | [task-8.2-call-manager.md](task-8.2-call-manager.md) | ⬜ |
+| 8.3 Build the call UI | [task-8.3-call-ui.md](task-8.3-call-ui.md) | ⬜ |
+| 8.4 Save call logs as chat messages | [task-8.4-call-log-messages.md](task-8.4-call-log-messages.md) | ⬜ |
+| 8.5 Test the call loop | [task-8.5-test-call-loop.md](task-8.5-test-call-loop.md) | ⬜ |
 
 ## Decisions
 - **Test runner:** Vitest

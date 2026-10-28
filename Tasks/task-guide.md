@@ -189,3 +189,68 @@ Write down the exact commands to start the project. We update `readme.md` with a
 start guide (run the server in one terminal, the website in another) and fill in the
 "Build & run commands" section in `AGENTS.md`. This makes the project reproducible for
 anyone who clones it.
+
+### task-7.5-group-create-ui.md
+Add a "New Group" flow to the new-conversation dialog. The server already knows how to
+create groups (`POST /api/groups` from section 5), but the website had no button for it.
+We reuse the same user-picker list with checkboxes so several members can be selected,
+add a group-name field, and open the new group after it is created.
+
+### task-7.6-group-member-endpoints.md
+Add endpoints to manage group membership. A group admin can add a member
+(`POST /api/conversations/:sid/members`) or remove one
+(`DELETE /api/conversations/:sid/members/:userSID`), and any member can remove
+themselves to leave the group. The database already knows how to add members; we add a
+`removeMember` helper and the permission checks on top.
+
+### task-7.7-group-members-ui.md
+Build the "Group info" panel in the website. Clicking a group's header shows its member
+list with an "Admin" label where appropriate. Admins see add/remove controls; everyone
+sees a "Leave group" button. The same screen shows different controls depending on your
+role — a pattern the admin site uses too.
+
+### task-7.8-test-group-loop.md
+Test the whole group feature in the browser: create a group from the UI as one user,
+confirm other members see it and receive messages in real time, then add, remove, and
+leave via the Group info panel. Also confirm 1:1 chats are unaffected.
+
+---
+
+## 8. Video & Audio Calls — Letting users call each other
+
+WebRTC lets two browsers send video and audio directly to each other — the server
+never sees the media. But before that can happen, the two browsers must exchange
+small "business card" messages (called SDP and ICE) to agree on how to connect.
+Our existing Socket.IO connection carries those messages; this is called signaling.
+
+### task-8.1-call-signaling.md
+Add call signaling to the server. Each user joins a personal room so they can be
+reached anywhere in the app. The server handles events for inviting someone to a
+call, answering, exchanging the WebRTC handshake messages, and hanging up. It
+keeps a small in-memory list of active calls so it can reject "user is busy" and
+clean up when someone disconnects.
+
+### task-8.2-call-manager.md
+Build the call manager on the frontend. It's a single shared class (like our API
+client) that owns everything call-related: it asks the browser for camera and
+microphone access (`getUserMedia`), creates the `RTCPeerConnection` (the object
+that carries media between browsers), and listens to the signaling socket events.
+React components just subscribe to its events to update the UI.
+
+### task-8.3-call-ui.md
+Build the call screens. A call button appears in 1:1 chats. Clicking it shows a
+full-screen overlay with the other person's video large and yours in a small
+corner, plus mute, camera-off, and hang-up buttons. On the receiving side, a
+ringing modal shows who is calling with Accept and Decline buttons.
+
+### task-8.4-call-log-messages.md
+Save calls into the chat history. When a call ends, the server saves a special
+message (type `call_signal`, already reserved in the schema) like "Missed call"
+or "Video call · 4:12". It appears in the conversation just like a text message,
+so users can see their call history — the same trick WhatsApp uses.
+
+### task-8.5-test-call-loop.md
+Test a real call between two users. Open two browsers, log in as two different
+users, and make a video call: the other side rings, they accept, both videos
+play, either side can hang up, and a call entry appears in the chat. We also test
+decline/cancel and audio-only calls.

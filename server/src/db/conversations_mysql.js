@@ -29,8 +29,9 @@ class ConversationRepository {
       const conversationSID = result.lastInsertRowid;
       this.addMember(conversationSID, creatorSID, 1);
       for (const memberSID of memberSIDs) {
-        if (Number(memberSID) !== creatorSID) {
-          this.addMember(conversationSID, Number(memberSID));
+        const numericMemberSID = Number(memberSID);
+        if (numericMemberSID !== creatorSID) {
+          this.addMember(conversationSID, numericMemberSID);
         }
       }
       return conversationSID;
@@ -44,6 +45,10 @@ class ConversationRepository {
       INSERT INTO table_ConversationMember (conversation_SID, user_SID, isGroupAdmin)
       VALUES (?, ?, ?)
     `).run(conversationSID, userSID, isGroupAdmin).lastInsertRowid;
+  }
+
+  addMemberToConversation({ conversationSID, userSID }) {
+    return this.addMember(conversationSID, userSID);
   }
 
   getConversationsForUser(userSID) {

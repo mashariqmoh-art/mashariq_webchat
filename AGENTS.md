@@ -87,11 +87,9 @@ Team reference notes (e.g. `Git_Info.txt`). Not part of the running application.
 
 ## Build & run commands
 
-> TODO: fill in once the server and frontend are initialized.
->
-> Expected:
-> - `server/`: `npm install`, `npm run dev` (Express + Socket.IO on port 3001)
-> - `website/`: `npm install`, `npm run dev` (Vite dev server on port 5173)
+- `server/`: `npm install`, `npm run dev` (Express + Socket.IO on port 3001); `npm run seed:admin` seeds the admin user
+- `website/`: `npm install`, `npm run dev` (Vite dev server on port 5174)
+- **Docker:** `docker compose up -d` from the repo root builds and runs both services — frontend on http://localhost:8080, API + Socket.IO on :3001, SQLite persisted in the `server-data` volume. `docker compose down` stops; add `-v` to also wipe the database. Optional demo users: `docker compose exec server npm run seed`.
 
 ## Conventions
 
