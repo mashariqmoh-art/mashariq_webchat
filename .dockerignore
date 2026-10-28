@@ -1,0 +1,12 @@
+.git
+**/node_modules
+**/dist
+**/.env
+**/*.sqlite
+**/*.sqlite3
+Tasks
+Learning
+.vscode
+newFile.txt
+package-lock.json
+docker-compose.yml
